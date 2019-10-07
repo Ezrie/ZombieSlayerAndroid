@@ -5,7 +5,7 @@ package com.badlogic.mariogame.Screens;
  * @author Ezrie Brant
  * @author David Chan
  * @author Francis Ynoa
- * Last Updated: 10/02/2019
+ * Last Updated: 10/06/2019
  */
 
 import com.badlogic.gdx.Gdx;
@@ -31,123 +31,161 @@ import com.badlogic.mariogame.GameConstants;
 import com.badlogic.mariogame.Scenes.HUD;
 import com.badlogic.mariogame.MarioGame;
 
-public class PlayScreen implements Screen, GameConstants {
+public class PlayScreen implements Screen {
 
-    //Declares a new game
+    //Declares a new game.
     private MarioGame game;
-    //Camera that follows the game
+    //Camera that follows the game.
     private OrthographicCamera gameCam;
-    //Veiwports determine the aspect ratio for different devices
+    //Veiwport that determine the aspect ratio for different devices.
     private Viewport gamePort;
+    //HUD displays the informational text across the top of the screen.
     private HUD hud;
 
-    //Loads the map into the game
+    //Loads the map into the game.
     private TmxMapLoader mapLoader;
-    //References the map itself (graphic)
     private TiledMap map;
-    //Renders the map to the screen
+    //Creates a renderer for this map.
     private OrthogonalTiledMapRenderer renderer;
 
+    //The world where all physics will take place using Box2D.
     private World world;
     private Box2DDebugRenderer b2dr;
 
-    //The game "world" where the camera, screen, map, and tile object are created and rendered
-    public PlayScreen(MarioGame game) {
-        PlayScreen.this.game = game;
+    /**
+     * The game's "world" where the camera, screen, map, and objects are created and rendered.
+     *
+     * @param _game
+     */
+    public PlayScreen(MarioGame _game) {
+
+        //Creates a new instance of the game.
+        this.game = _game;
         gameCam = new OrthographicCamera();
-        gamePort = new FitViewport(V_WIDTH, V_HEIGHT, gameCam);
+        gamePort = new FitViewport(GameConstants.V_WIDTH, GameConstants.V_HEIGHT, gameCam);
         hud = new HUD(game.batch);
+
+        //Loads in the map asset and renderer.
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("level1.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);
 
-        gameCam.position.set(gamePort.getWorldWidth() / TWO, gamePort.getWorldHeight() / TWO, CAM_Z);
+        //Camera starting position.
+        float initCameraX = gamePort.getWorldWidth() / 2;
+        float initCameraY = gamePort.getWorldHeight() / 2;
+        float initCameraZ = 0;
+        //Create the camera object.
+        gameCam.position.set(initCameraX, initCameraY, initCameraZ);
 
-        world = new World(new Vector2(ZERO, ZERO), true);
+        //Creates a new Box2D world for physical movements.
+        world = new World(new Vector2(0,0), true);
         b2dr = new Box2DDebugRenderer();
 
+        //Defines a new type of object which will surround the tiles that can be interacted with.
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
         Body body;
 
-        //Ground, the second layer in the map is the ground object
+        //These will be moved into separate classes later.
+        //Ground, the second layer in the map is the ground object. For each tile, create an object.
         for (MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
+            //Gets the rectangle object from the tile map.
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
+            //Defines the type of the body object as static (not effected by the physics mechanic).
             bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rect.getX() + rect.getWidth() / TWO, rect.getY() + rect.getHeight() / TWO);
+            //Positions the start of the body object at the start of the tile.
+            bdef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
 
             body = world.createBody(bdef);
 
-            shape.setAsBox(rect.getWidth() / TWO, rect.getHeight() / TWO);
+            //Defines the height and width of the body object to be the same as the tile map's object.
+            shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
             fdef.shape = shape;
+            //Creates a new fixture out of the body object.
             body.createFixture(fdef);
         }
 
-        //Pipe, the third layer in the map is the pipe object
+        //Pipe, the third layer in the map is the pipe object.
         for (MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rect.getX() + rect.getWidth() / TWO, rect.getY() + rect.getHeight() / TWO);
+            bdef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
 
             body = world.createBody(bdef);
 
-            shape.setAsBox(rect.getWidth() / TWO, rect.getHeight() / TWO);
+            shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
             fdef.shape = shape;
             body.createFixture(fdef);
         }
 
-        //Brick, the fifth layer in the map is the brick object
+        //Brick, the fifth layer in the map is the brick object.
         for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rect.getX() + rect.getWidth() / TWO, rect.getY() + rect.getHeight() / TWO);
+            bdef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
 
             body = world.createBody(bdef);
 
-            shape.setAsBox(rect.getWidth() / TWO, rect.getHeight() / TWO);
+            shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
             fdef.shape = shape;
             body.createFixture(fdef);
         }
 
-        //Coin, the fourth layer in the map is the coin object
+        //Coin, the fourth layer in the map is the coin object.
         for (MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rect.getX() + rect.getWidth() / TWO, rect.getY() + rect.getHeight() / TWO);
+            bdef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
 
             body = world.createBody(bdef);
 
-            shape.setAsBox(rect.getWidth() / TWO, rect.getHeight() / TWO);
+            shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
             fdef.shape = shape;
             body.createFixture(fdef);
         }
     }
 
+    /**
+     * To be implemented
+     */
     @Override
     public void show() {
 
     }
 
-    //Updates the camera whenever the screen is touched (temp method for testing)
+    /**
+     * Moves the camera whenever the game screen is touched.
+     *
+     * @param _dt
+     */
     public void handleInput(float _dt) {
         if (Gdx.input.isTouched()) {
+            //Moves the camera in the positive x direction.
             gameCam.position.x += 100 * _dt;
         }
     }
 
-    //Updates the camera position continuously
+    /**
+     * Updates the camera position continuously.
+     *
+     * @param _dt
+     */
     public void update(float _dt) {
         handleInput(_dt);
         gameCam.update();
         renderer.setView(gameCam);
     }
 
-    //Clears the map and re-renders each update
+    /**
+     * Clears the map and re-renders each update.
+     *
+     * @param _delta
+     */
     @Override
     public void render(float _delta) {
         update(_delta);
@@ -164,27 +202,44 @@ public class PlayScreen implements Screen, GameConstants {
         hud.stage.draw();
     }
 
-    //Used if the game viewport is re-sized
+    /**
+     * Updates the gamePort if the window is re-sized.
+     *
+     * @param _width
+     * @param _height
+     */
     @Override
     public void resize(int _width, int _height) {
         gamePort.update(_width, _height);
     }
 
+    /**
+     * To be implemented
+     */
     @Override
     public void pause() {
 
     }
 
+    /**
+     * To be implemented
+     */
     @Override
     public void resume() {
 
     }
 
+    /**
+     * To be implemented
+     */
     @Override
     public void hide() {
 
     }
 
+    /**
+     * To be implemented
+     */
     @Override
     public void dispose() {
 
