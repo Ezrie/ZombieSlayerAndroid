@@ -1,4 +1,12 @@
 package com.badlogic.mariogame.desktop;
+/**
+ * This class is the file that launches the game for the desktop.
+ *
+ * @author Ezrie Brant
+ * @author David Chan
+ * @author Francis Ynoa
+ * Last Updated: 10/02/2019
+ */
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;

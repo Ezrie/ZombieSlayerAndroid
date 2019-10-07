@@ -1,6 +1,6 @@
 package com.badlogic.mariogame;
 /**
- * This class is a demonstration of the style guide.
+ * This class is the file that launches for Android devices and emulators.
  *
  * @author Ezrie Brant
  * @author David Chan
