@@ -29,21 +29,21 @@ public class HUD {
     private Label.LabelStyle textFont = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
 
     //HUD literals.
-    private Integer WORLD_TIMER = 300;
-    private float TIMECOUNT = 0; //To be used later.
-    private Integer SCORE = 0;
-    private String NAME_LABEL = "Mario";
-    private String TIME_LABEL = "Time";
-    private String LEVEL_LABEL = "1-1";
-    private String WORLD_LABEL = "WORLD";
+    private Integer worldTimer = 300;
+    private float timeCount = 0; //To be used later.
+    private Integer scoreLabel = 0;
+    private String nameLabel = "Mario";
+    private String timeLabel = "Time";
+    private String levelLabel = "1-1";
+    private String worldLabel = "WORLD";
 
     //HUD components formatted.
-    private Label countdownLabel = new Label (String.format("%03d", WORLD_TIMER), textFont);
-    private  Label scoreLabel = new Label(String.format("%06d", SCORE),textFont);
-    private Label timeLabel = new Label(TIME_LABEL, textFont);
-    private Label levelLabel = new Label(LEVEL_LABEL, textFont);
-    private Label worldLabel = new Label(WORLD_LABEL, textFont);
-    private Label nameLabel = new Label(NAME_LABEL, textFont);
+    private Label countdownHUD = new Label (String.format("%03d", worldTimer), textFont);
+    private  Label scoreHUD = new Label(String.format("%06d", scoreLabel),textFont);
+    private Label timeHUD = new Label(timeLabel, textFont);
+    private Label levelHUD = new Label(levelLabel, textFont);
+    private Label worldHUD = new Label(worldLabel, textFont);
+    private Label nameHUD = new Label(nameLabel, textFont);
 
     //Size of the HUD's top margin.
     private int menuTopPad = 10;
@@ -67,13 +67,13 @@ public class HUD {
 
         //Add the labels to the table and give the first row a top margin.
         //.expandX() Fills the table across the viewport's x-axis.
-        table.add(nameLabel).expandX().padTop(menuTopPad);
-        table.add(worldLabel).expandX().padTop(menuTopPad);
-        table.add(timeLabel).expandX().padTop(menuTopPad);
+        table.add(nameHUD).expandX().padTop(menuTopPad);
+        table.add(worldHUD).expandX().padTop(menuTopPad);
+        table.add(timeHUD).expandX().padTop(menuTopPad);
         table.row();
-        table.add(scoreLabel).expandX();
-        table.add(levelLabel).expandX();
-        table.add(countdownLabel).expandX();
+        table.add(scoreHUD).expandX();
+        table.add(levelHUD).expandX();
+        table.add(countdownHUD).expandX();
 
         //Add the created table to the stage.
         stage.addActor(table);
