@@ -12,4 +12,6 @@ public class GameConstants {
     //Width and height of the world's camera.
     public static int V_WIDTH = 400;
     public static int V_HEIGHT = 208;
+    //Pixels Per Meter for box2dr physics.
+    public static float PPM = 100;
 }

@@ -9,6 +9,7 @@ package com.badlogic.mariogame.Screens;
  */
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -30,6 +31,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.mariogame.GameConstants;
 import com.badlogic.mariogame.Scenes.HUD;
 import com.badlogic.mariogame.MarioGame;
+import com.badlogic.mariogame.Sprites.Mario;
+
+import static sun.audio.AudioPlayer.player;
 
 public class PlayScreen implements Screen {
 
@@ -41,6 +45,8 @@ public class PlayScreen implements Screen {
     private Viewport gamePort;
     //HUD displays the informational text across the top of the screen.
     private HUD hud;
+    private int maxSpeed = 2;
+    private float speed = 0.15f;
 
     //Loads the map into the game.
     private TmxMapLoader mapLoader;
@@ -52,6 +58,9 @@ public class PlayScreen implements Screen {
     private World world;
     private Box2DDebugRenderer b2dr;
 
+    //Create the player object
+    private Mario player;
+
     /**
      * The game's "world" where the camera, screen, map, and objects are created and rendered.
      *
@@ -62,13 +71,13 @@ public class PlayScreen implements Screen {
         //Creates a new instance of the game.
         this.game = _game;
         gameCam = new OrthographicCamera();
-        gamePort = new FitViewport(GameConstants.V_WIDTH, GameConstants.V_HEIGHT, gameCam);
+        gamePort = new FitViewport(GameConstants.V_WIDTH / GameConstants.PPM, GameConstants.V_HEIGHT / GameConstants.PPM, gameCam);
         hud = new HUD(game.batch);
 
         //Loads in the map asset and renderer.
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("level1.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map);
+        renderer = new OrthogonalTiledMapRenderer(map, 1 / GameConstants.PPM);
 
         //Camera starting position.
         float initCameraX = gamePort.getWorldWidth() / 2;
@@ -78,8 +87,13 @@ public class PlayScreen implements Screen {
         gameCam.position.set(initCameraX, initCameraY, initCameraZ);
 
         //Creates a new Box2D world for physical movements.
+        //-10 refers to the force of gravity (downwards in the y direction).
         world = new World(new Vector2(0,0), true);
         b2dr = new Box2DDebugRenderer();
+
+        //New player object
+        player = new Mario(world);
+        player.b2body.setLinearDamping(5f);
 
         //Defines a new type of object which will surround the tiles that can be interacted with.
         BodyDef bdef = new BodyDef();
@@ -96,12 +110,12 @@ public class PlayScreen implements Screen {
             //Defines the type of the body object as static (not effected by the physics mechanic).
             bdef.type = BodyDef.BodyType.StaticBody;
             //Positions the start of the body object at the start of the tile.
-            bdef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / GameConstants.PPM, (rect.getY() + rect.getHeight() / 2) / GameConstants.PPM);
 
             body = world.createBody(bdef);
 
             //Defines the height and width of the body object to be the same as the tile map's object.
-            shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
+            shape.setAsBox((rect.getWidth() / 2) / GameConstants.PPM, (rect.getHeight() / 2) / GameConstants.PPM);
             fdef.shape = shape;
             //Creates a new fixture out of the body object.
             body.createFixture(fdef);
@@ -111,13 +125,17 @@ public class PlayScreen implements Screen {
         for (MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
+            //Defines the type of the body object as static (not effected by the physics mechanic).
             bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
+            //Positions the start of the body object at the start of the tile.
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / GameConstants.PPM, (rect.getY() + rect.getHeight() / 2) / GameConstants.PPM);
 
             body = world.createBody(bdef);
 
-            shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
+            //Defines the height and width of the body object to be the same as the tile map's object.
+            shape.setAsBox((rect.getWidth() / 2) / GameConstants.PPM, (rect.getHeight() / 2) / GameConstants.PPM);
             fdef.shape = shape;
+            //Creates a new fixture out of the body object.
             body.createFixture(fdef);
         }
 
@@ -125,13 +143,17 @@ public class PlayScreen implements Screen {
         for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
+            //Defines the type of the body object as static (not effected by the physics mechanic).
             bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
+            //Positions the start of the body object at the start of the tile.
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / GameConstants.PPM, (rect.getY() + rect.getHeight() / 2) / GameConstants.PPM);
 
             body = world.createBody(bdef);
 
-            shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
+            //Defines the height and width of the body object to be the same as the tile map's object.
+            shape.setAsBox((rect.getWidth() / 2) / GameConstants.PPM, (rect.getHeight() / 2) / GameConstants.PPM);
             fdef.shape = shape;
+            //Creates a new fixture out of the body object.
             body.createFixture(fdef);
         }
 
@@ -139,13 +161,17 @@ public class PlayScreen implements Screen {
         for (MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
+            //Defines the type of the body object as static (not effected by the physics mechanic).
             bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
+            //Positions the start of the body object at the start of the tile.
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / GameConstants.PPM, (rect.getY() + rect.getHeight() / 2) / GameConstants.PPM);
 
             body = world.createBody(bdef);
 
-            shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
+            //Defines the height and width of the body object to be the same as the tile map's object.
+            shape.setAsBox((rect.getWidth() / 2) / GameConstants.PPM, (rect.getHeight() / 2) / GameConstants.PPM);
             fdef.shape = shape;
+            //Creates a new fixture out of the body object.
             body.createFixture(fdef);
         }
     }
@@ -164,9 +190,22 @@ public class PlayScreen implements Screen {
      * @param _dt
      */
     public void handleInput(float _dt) {
-        if (Gdx.input.isTouched()) {
-            //Moves the camera in the positive x direction.
-            gameCam.position.x += 100 * _dt;
+
+        //On a button press (up, down, right, or left) a linear impulse (from Box2d) will be applied.
+        if ((Gdx.input.isKeyPressed(Input.Keys.UP) ) && player.b2body.getLinearVelocity().y <= maxSpeed) {
+            player.b2body.applyLinearImpulse(new Vector2(0, speed), player.b2body.getWorldCenter(), true);
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && player.b2body.getLinearVelocity().y >= -maxSpeed) {
+            player.b2body.applyLinearImpulse(new Vector2(0, -speed), player.b2body.getWorldCenter(), true);
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= maxSpeed){
+            player.b2body.applyLinearImpulse(new Vector2(speed, 0), player.b2body.getWorldCenter(), true);
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -maxSpeed){
+            player.b2body.applyLinearImpulse(new Vector2(-speed, 0), player.b2body.getWorldCenter(), true);
         }
     }
 
@@ -177,6 +216,13 @@ public class PlayScreen implements Screen {
      */
     public void update(float _dt) {
         handleInput(_dt);
+
+        //How accurate the physics calculations will be to the real world. Updates 60 times a second.
+        world.step(1/60f, 6, 2);
+        //Move gamecam with player
+        gameCam.position.x = player.b2body.getPosition().x;
+        gameCam.position.y = player.b2body.getPosition().y;
+
         gameCam.update();
         renderer.setView(gameCam);
     }
