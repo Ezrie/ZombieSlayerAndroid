@@ -12,9 +12,10 @@ package com.badlogic.mariogame;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-public class Settings extends Activity {
+public class Settings extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle _savedInstanceState) {

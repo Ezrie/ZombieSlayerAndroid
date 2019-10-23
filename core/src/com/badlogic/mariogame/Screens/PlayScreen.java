@@ -87,12 +87,12 @@ public class PlayScreen implements Screen {
         gameCam.position.set(initCameraX, initCameraY, initCameraZ);
 
         //Creates a new Box2D world for physical movements.
-        //-10 refers to the force of gravity (downwards in the y direction).
         world = new World(new Vector2(0,0), true);
         b2dr = new Box2DDebugRenderer();
 
-        //New player object
+        //Creates a new player object.
         player = new Mario(world);
+        //Reduces the velocity of the player after the movements buttons are released.
         player.b2body.setLinearDamping(5f);
 
         //Defines a new type of object which will surround the tiles that can be interacted with.

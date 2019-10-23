@@ -13,9 +13,10 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-public class Load extends Activity {
+public class Load extends AppCompatActivity {
 
     private int timeWait = 5000; //This number is used for milliseconds.
 
