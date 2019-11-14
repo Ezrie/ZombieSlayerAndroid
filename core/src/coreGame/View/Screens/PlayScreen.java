@@ -10,6 +10,7 @@ package coreGame.View.Screens;
 
 import coreGame.Events.WorldContactListener;
 import coreGame.Model.Survivor;
+import coreGame.Model.Zombie;
 import coreGame.Util.GameConstants;
 import coreGame.Game.ZombieGame;
 import coreGame.Tools.B2WorldCreator;
@@ -40,7 +41,9 @@ public class PlayScreen implements Screen {
     float DAMPING = 10f;
     //This creates Survivor.
     private Survivor player;
-    //
+    //This creates the Zombie.
+    private Zombie zombie;
+    //This creates a map of textures defined by regions.
     private TextureAtlas atlas;
     //Declares a new game.
     private ZombieGame game;
@@ -89,9 +92,10 @@ public class PlayScreen implements Screen {
 
         //Creates a new Box2D world for physical movements.
         world = new World(new Vector2(0, 0), true);
-        player = new Survivor(world, this);
+        player = new Survivor(this);
+        zombie = new Zombie(this, 32 / GameConstants.PPM, 32 / GameConstants.PPM);
         b2dr = new Box2DDebugRenderer();
-        new B2WorldCreator(world, map);
+        new B2WorldCreator(this);
         //Linear damping slows down the player movement if no keys are being pressed.
         player.b2body.setLinearDamping(DAMPING);
 
@@ -146,6 +150,8 @@ public class PlayScreen implements Screen {
         gameCam.position.x = player.b2body.getPosition().x;
         gameCam.position.y = player.b2body.getPosition().y;
         gameCam.update();
+        //error
+        zombie.update(_dt);
         // This renders only what can be seen by the player -- the gameCam.
         renderer.setView(gameCam);
     }
@@ -233,7 +239,12 @@ public class PlayScreen implements Screen {
     public TextureAtlas getAtlas() {
         return atlas;
     }
-
+    public TiledMap getMap(){
+        return map;
+    }
+    public World getWorld(){
+        return world;
+    }
 
 }
 

@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -27,26 +28,25 @@ public class HUD implements Disposable {
     private Viewport viewport;
 
     //Font and color of the HUD items.
-    private Label.LabelStyle textFont = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
+    private static Label.LabelStyle textFont = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
 
     //HUD literals.
     private Integer worldTimer = 300;
     //This will be used later.
     private float timeCount = 0;
-    private Integer scoreCount = 0;
+    private static Integer scoreCount = 0;
     private String nameLabel = "Survivor";
     private String timeLabel = "Time";
     private int healthLabel = 100;
-    private String scoreLabel = "SCORE";
+    private static String scoreLabel = "SCORE";
 
     //HUD components formatted.
-    private Label countdownHUD = new Label (String.format("%03d", worldTimer), textFont);
-    private  Label scoreHUD = new Label(String.format("%06d", scoreCount),textFont);
+    private Label countdownHUD = new Label (String.format("%03d", worldTimer),textFont);
+    private static Label scoreHUD = new Label(String.format("%06d", scoreCount),textFont);
     private Label timeHUD = new Label(timeLabel, textFont);
     private Label healthHUD = new Label(String.format("%03d", healthLabel), textFont);
     private Label worldHUD = new Label(scoreLabel, textFont);
     private Label nameHUD = new Label(nameLabel, textFont);
-
     //Size of the HUD's top margin.
     private int menuTopPad = 10;
 
@@ -90,7 +90,10 @@ public class HUD implements Disposable {
         }
     }
 
-    //public void addScore()
+    public static void addScore(int value){
+        scoreCount += value;
+        scoreHUD.setText(String.format("%06d", scoreCount));
+    }
 
     @Override
     public void dispose() {

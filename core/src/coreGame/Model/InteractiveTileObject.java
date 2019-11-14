@@ -9,7 +9,9 @@ package coreGame.Model;
  */
 
 import coreGame.Util.GameConstants;
+import coreGame.View.Screens.PlayScreen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -31,10 +33,10 @@ public abstract class InteractiveTileObject {
     protected Body body;
     protected Fixture fixture;
 
-    public InteractiveTileObject(World world, TiledMap map, Rectangle bounds){
-        this.world = world;
-        this.map = map;
-        this.bounds = bounds;
+    public InteractiveTileObject(PlayScreen _screen, Rectangle _bounds){
+        this.world = _screen.getWorld();
+        this.map = _screen.getMap();
+        this.bounds = _bounds;
 
         BodyDef bdef = new BodyDef();
         FixtureDef fdef = new FixtureDef();
@@ -42,11 +44,11 @@ public abstract class InteractiveTileObject {
 
         //This sets the body-type of the body to static. A static body is not affected by physics in the 2d world.
         bdef.type = BodyDef.BodyType.StaticBody;
-        bdef.position.set((bounds.getX() + bounds.getWidth() / 2) / GameConstants.PPM, (bounds.getY() + bounds.getHeight() / 2) / GameConstants.PPM);
+        bdef.position.set((_bounds.getX() + _bounds.getWidth() / 2) / GameConstants.PPM, (_bounds.getY() + _bounds.getHeight() / 2) / GameConstants.PPM);
 
         //This creates the body in the box 2d world.
         body = world.createBody(bdef);
-        shape.setAsBox((bounds.getWidth() / 2) / GameConstants.PPM, (bounds.getHeight() / 2) / GameConstants.PPM);
+        shape.setAsBox((_bounds.getWidth() / 2) / GameConstants.PPM, (_bounds.getHeight() / 2) / GameConstants.PPM);
         fdef.shape = shape;
         fixture = body.createFixture(fdef);
     }

@@ -21,10 +21,10 @@ public class Survivor extends Sprite {
     public Body b2body;
     private TextureRegion survivorStand;
 
-    public Survivor(World _world, PlayScreen _screen){
+    public Survivor(PlayScreen _screen){
         super(_screen.getAtlas().findRegion("Attack (1)"));
 
-        this.world = _world;
+        this.world = _screen.getWorld();
         defineSurvivor();
         survivorStand = new TextureRegion(getTexture(), 1, 1, 430, 519);
         setBounds(0, 0, 16 / GameConstants.PPM, 16 / GameConstants.PPM);
@@ -50,7 +50,11 @@ public class Survivor extends Sprite {
         //This defines the filter for Survivor.
         fdef.filter.categoryBits = GameConstants.SURVIVOR_BIT;
         //The mask filter defines what the survivor can collide with.
-        fdef.filter.maskBits = GameConstants.DEFAULT_BIT | GameConstants.COIN_BIT | GameConstants.BRICK_BIT;
+        fdef.filter.maskBits = GameConstants.DEFAULT_BIT |
+                GameConstants.COIN_BIT |
+                GameConstants.BRICK_BIT |
+                GameConstants.OBJECT_BIT |
+                GameConstants.ZOMBIE_BIT;
 
         fdef.shape = shape;
         //The sensor makes the fixture to longer collide with anything in the box 2d world if set to true.
@@ -65,6 +69,15 @@ public class Survivor extends Sprite {
      * @param _dt is delta time.
      */
     public void update(float _dt){
-        setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
+        setPosition(getPositionX(), getPositionY());
+    }
+
+    //==================================== Getters ==================================
+    public float getPositionX(){
+        return b2body.getPosition().x - getWidth() / 2;
+    }
+
+    public float getPositionY(){
+        return b2body.getPosition().y - getHeight() / 2;
     }
 }

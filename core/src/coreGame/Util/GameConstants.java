@@ -27,4 +27,7 @@ public class GameConstants {
     public static final short COIN_BIT = 8;
     public static final short DESTROYED_BIT = 16;
     public static final short ZOMBIE_BIT = 32;
+    public static final short OBJECT_BIT = 64;
+    public static final short GHOST_BIT = 128;
+    public static final short PROJECTILE_BIT = 256;
 }
