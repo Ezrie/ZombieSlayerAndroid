@@ -10,6 +10,8 @@ package coreGame.Tools;
 import coreGame.Model.Default;
 import coreGame.Model.Brick;
 import coreGame.Model.Coin;
+import coreGame.Model.Zombie;
+import coreGame.Util.GameConstants;
 import coreGame.View.Screens.PlayScreen;
 
 import com.badlogic.gdx.maps.MapObject;
@@ -21,8 +23,10 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 
 public class B2WorldCreator {
+    private Array<Zombie> zombies;
     public B2WorldCreator(PlayScreen screen){
         World world = screen.getWorld();
         TiledMap map = screen.getMap();
@@ -59,5 +63,16 @@ public class B2WorldCreator {
 
             new Coin(screen, rect);
         }
+
+        //This creates all zombies from the tile map for this level.
+        zombies = new Array<Zombie>();
+        for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            zombies.add(new Zombie(screen, rect.getX() / GameConstants.PPM, rect.getY() / GameConstants.PPM));
+        }
+    }
+    // ========================================= Getters =================================
+    public Array<Zombie> getZombies() {
+        return zombies;
     }
 }

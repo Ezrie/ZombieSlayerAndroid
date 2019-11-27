@@ -5,7 +5,7 @@ package coreGame.Model;
  * @author Ezrie Brant
  * @author David Chan
  * @author Francis Ynoa
- * Last Updated: 10/21/2019
+ * Last Updated: 11/14/2019
  */
 
 import coreGame.Util.GameConstants;
@@ -54,11 +54,9 @@ public abstract class InteractiveTileObject {
     }
 
     public abstract void objectHit();
-
-    public TiledMapTileLayer.Cell getCell(){
-        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
-        return layer.getCell((int) (body.getPosition().x * GameConstants.PPM / 16), (int) (body.getPosition().y * GameConstants.PPM / 16));
-    }
+    public abstract void survivorCollision();
+    public abstract void zombieHit();
+    public abstract void bulletHit();
 
     // ======================================== SETTERS ==================================================
 
@@ -66,5 +64,11 @@ public abstract class InteractiveTileObject {
         Filter filter = new Filter();
         filter.categoryBits = filterBit;
         fixture.setFilterData(filter);
+    }
+
+    //This retrieves the specific cell from the tile map.
+    public TiledMapTileLayer.Cell getCell(){
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
+        return layer.getCell((int) (body.getPosition().x * GameConstants.PPM / 16), (int) (body.getPosition().y * GameConstants.PPM / 16));
     }
 }

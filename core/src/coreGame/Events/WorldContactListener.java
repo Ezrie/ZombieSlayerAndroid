@@ -15,9 +15,11 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 
 import coreGame.Model.Enemy;
 import coreGame.Model.InteractiveTileObject;
-import coreGame.Tools.B2WorldCreator;
+import coreGame.Model.Survivor;
+import coreGame.Util.GameConstants;
 
 public class WorldContactListener implements ContactListener {
+    int count = 0;
     /*
     This method identifies what fixtures are colliding when they do collide.
      */
@@ -27,14 +29,8 @@ public class WorldContactListener implements ContactListener {
         Fixture fixB = _contact.getFixtureB();
         Fixture object;
 
-        switch (fixA.getUserData().toString()) {
-            case "survivor":
-                objectIdentifier(fixB);
-            case "zombie":
-                objectIdentifier(fixB);
-            default:
-                objectIdentifier(fixA);
-        }
+        objectIdentifier(fixA, fixB);
+
     }
 
         /*if(fixA.getUserData() == "survivor" || fixB.getUserData() == "survivor"){
@@ -47,19 +43,63 @@ public class WorldContactListener implements ContactListener {
                 ((InteractiveTileObject) object.getUserData()).objectHit();
             }*/
 
-    //This is a helper method for beginContact.
-    public void objectIdentifier(Fixture _fixture){
-        Fixture object = _fixture;
-        if (object.getUserData() != null && InteractiveTileObject.class.isAssignableFrom(object.getUserData().getClass())) {
-            ((InteractiveTileObject) object.getUserData()).objectHit();
-        }
-        else if (object.getUserData() != null && Enemy.class.isAssignableFrom(object.getUserData().getClass())) {
-            ((Enemy) object.getUserData()).enemyHit();
-        }
-        else if (object.getUserData() != null && B2WorldCreator.class.isAssignableFrom(object.getUserData().getClass())) {
-            ((Enemy) object.getUserData()).enemyHit();
+    //This is a helper method for beginContact to identify what is being collided.
+    public void objectIdentifier(Fixture _fixA, Fixture _fixB){
+
+        switch (_fixA.getFilterData().categoryBits) {
+            case GameConstants.SURVIVOR_BIT:
+                count = 0;
+                objectIdentifierWithSurvivor(_fixB, _fixA);
+                break;
+            case GameConstants.ZOMBIE_BIT:
+                count = 0;
+                objectIdentifierWithZombie(_fixB, _fixA);
+                break;
+            case GameConstants.PROJECTILE_BIT:
+                count = 0;
+                objectIdentifierWithSurvivor(_fixB, _fixA);
+                break;
+            default:
+                {
+                    count++;
+                    if (count == 1){
+                        objectIdentifier(_fixB, _fixA);
+                        break;
+                    }
+                    else {
+                        count = 0;
+                        Gdx.app.log("unknown", "Collision");
+                        //objectIdentifierWithSurvivor(_fixB);
+                        break;
+                    }
+            }
         }
     }
+
+    public void objectIdentifierWithSurvivor(Fixture _fixture, Fixture _survivor){
+        Fixture object = _fixture;
+        //This fires the event between survivor and a tile.
+        if (object.getUserData() != null && InteractiveTileObject.class.isAssignableFrom(object.getUserData().getClass())) {
+            ((InteractiveTileObject) object.getUserData()).survivorCollision();
+        }
+        //This fires the event between survivor and an enemy.
+        else if (object.getUserData() != null && Enemy.class.isAssignableFrom(object.getUserData().getClass())) {
+            ((Enemy) object.getUserData()).damageSurvivor();
+        }
+    }
+
+    public void objectIdentifierWithZombie(Fixture _fixture, Fixture _Zombie){
+        Fixture object = _fixture;
+        //This fires the event between a zombie and a tile.
+        if (object.getUserData() != null && InteractiveTileObject.class.isAssignableFrom(object.getUserData().getClass())) {
+            ((InteractiveTileObject) object.getUserData()).zombieHit();
+        }
+        //This fires the event between a zombie and a survivor.
+        else if (object.getUserData() != null && Survivor.class.isAssignableFrom(object.getUserData().getClass())) {
+            ((Enemy) _Zombie.getUserData()).damageSurvivor();
+        }
+    }
+
     /*
     This method simply returns a message when a collision has ended.
      */

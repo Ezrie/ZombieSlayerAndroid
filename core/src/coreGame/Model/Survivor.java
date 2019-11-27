@@ -4,7 +4,7 @@ package coreGame.Model;
  * @author Ezrie Brant
  * @author David Chan
  * @author Francis Ynoa
- * Last Updated: 10/21/2019
+ * Last Updated: 11/14/2019
  */
 import coreGame.Util.GameConstants;
 import coreGame.View.Screens.PlayScreen;
@@ -19,6 +19,8 @@ import com.badlogic.gdx.physics.box2d.World;
 public class Survivor extends Sprite {
     public World world;
     public Body b2body;
+
+    public int healthPoints;
     private TextureRegion survivorStand;
 
     public Survivor(PlayScreen _screen){
@@ -29,6 +31,7 @@ public class Survivor extends Sprite {
         survivorStand = new TextureRegion(getTexture(), 1, 1, 430, 519);
         setBounds(0, 0, 16 / GameConstants.PPM, 16 / GameConstants.PPM);
         setRegion(survivorStand);
+        setHealthPoints(100);
 
     }
 
@@ -60,8 +63,6 @@ public class Survivor extends Sprite {
         //The sensor makes the fixture to longer collide with anything in the box 2d world if set to true.
         fdef.isSensor = false;
         b2body.createFixture(fdef).setUserData("survivor");
-
-
     }
 
     /**
@@ -80,4 +81,13 @@ public class Survivor extends Sprite {
     public float getPositionY(){
         return b2body.getPosition().y - getHeight() / 2;
     }
+    public int getHealthPoints() {
+        return healthPoints;
+    }
+
+    //=================================== Setters =====================================
+    public void setHealthPoints(int _healthPoints) {
+        this.healthPoints = _healthPoints;
+    }
+
 }

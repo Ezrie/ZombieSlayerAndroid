@@ -8,6 +8,7 @@ package coreGame.View.Scenes;
  * Last Updated: 10/29/2019
  */
 
+import coreGame.Model.Survivor;
 import coreGame.Util.GameConstants;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -37,14 +38,14 @@ public class HUD implements Disposable {
     private static Integer scoreCount = 0;
     private String nameLabel = "Survivor";
     private String timeLabel = "Time";
-    private int healthLabel = 100;
+    private static Integer healthLabel = 100;
     private static String scoreLabel = "SCORE";
 
     //HUD components formatted.
     private Label countdownHUD = new Label (String.format("%03d", worldTimer),textFont);
     private static Label scoreHUD = new Label(String.format("%06d", scoreCount),textFont);
     private Label timeHUD = new Label(timeLabel, textFont);
-    private Label healthHUD = new Label(String.format("%03d", healthLabel), textFont);
+    private static Label healthHUD = new Label(String.format("%03d", healthLabel), textFont);
     private Label worldHUD = new Label(scoreLabel, textFont);
     private Label nameHUD = new Label(nameLabel, textFont);
     //Size of the HUD's top margin.
@@ -88,10 +89,16 @@ public class HUD implements Disposable {
             countdownHUD.setText(String.format("%03d", worldTimer));
             timeCount = 0;
         }
+
     }
 
-    public static void addScore(int value){
-        scoreCount += value;
+    public static void changeHealth(int _value){
+        healthLabel -= _value;
+        healthHUD.setText(String.format("%03d", healthLabel));
+    }
+
+    public static void addScore(int _value){
+        scoreCount += _value;
         scoreHUD.setText(String.format("%06d", scoreCount));
     }
 

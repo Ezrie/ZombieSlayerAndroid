@@ -9,11 +9,14 @@ package coreGame.View.Screens;
  */
 
 import coreGame.Events.WorldContactListener;
+import coreGame.Model.Enemy;
 import coreGame.Model.Survivor;
 import coreGame.Model.Zombie;
 import coreGame.Util.GameConstants;
 import coreGame.Game.ZombieGame;
 import coreGame.Tools.B2WorldCreator;
+
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -41,8 +44,7 @@ public class PlayScreen implements Screen {
     float DAMPING = 10f;
     //This creates Survivor.
     private Survivor player;
-    //This creates the Zombie.
-    private Zombie zombie;
+
     //This creates a map of textures defined by regions.
     private TextureAtlas atlas;
     //Declares a new game.
@@ -64,6 +66,8 @@ public class PlayScreen implements Screen {
     private World world;
     //This renderer gives graphical representation of the bodies in the world.
     private Box2DDebugRenderer b2dr;
+
+    private B2WorldCreator creator;
 
     /**
      * The game's "world" where the camera, screen, map, and objects are created and rendered.
@@ -93,9 +97,8 @@ public class PlayScreen implements Screen {
         //Creates a new Box2D world for physical movements.
         world = new World(new Vector2(0, 0), true);
         player = new Survivor(this);
-        zombie = new Zombie(this, 32 / GameConstants.PPM, 32 / GameConstants.PPM);
         b2dr = new Box2DDebugRenderer();
-        new B2WorldCreator(this);
+        creator = new B2WorldCreator(this);
         //Linear damping slows down the player movement if no keys are being pressed.
         player.b2body.setLinearDamping(DAMPING);
 
@@ -130,7 +133,6 @@ public class PlayScreen implements Screen {
             player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && speedY >= NEG_MAX_SPEED)
             player.b2body.applyLinearImpulse(new Vector2(0, -0.1f), player.b2body.getWorldCenter(), true);
-
     }
 
     /**
@@ -146,12 +148,16 @@ public class PlayScreen implements Screen {
         hud.update(_dt);
         //This updates the player position.
         player.update(_dt);
+
+        for (Enemy enemy : creator.getZombies()) {
+            enemy.update(_dt);
+            if (enemy.getX() < player.getX() + 224 / GameConstants.PPM)
+                enemy.b2body.setActive(true);
+        }
         //This makes the game camera follow the player.
         gameCam.position.x = player.b2body.getPosition().x;
         gameCam.position.y = player.b2body.getPosition().y;
         gameCam.update();
-        //error
-        zombie.update(_dt);
         // This renders only what can be seen by the player -- the gameCam.
         renderer.setView(gameCam);
     }
@@ -179,6 +185,8 @@ public class PlayScreen implements Screen {
         game.batch.begin();
         //This draws the batch.
         player.draw(game.batch);
+        for (Enemy enemy : creator.getZombies())
+            enemy.draw(game.batch);
         //This stops putting textures for the game camera.
         game.batch.end();
         //This draws the what is in the HUD camera.
