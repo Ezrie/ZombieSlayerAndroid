@@ -29,7 +29,7 @@ public class Survivor extends Sprite {
 
         this.world = _screen.getWorld();
         defineSurvivor();
-        survivorStand = new TextureRegion(getTexture(), 1, 1, 430, 519);
+        survivorStand = _screen.getTextures()[4][5];
         setBounds(0, 0, 16 / GameConstants.PPM, 16 / GameConstants.PPM);
         setRegion(survivorStand);
         setHealthPoints(100);
