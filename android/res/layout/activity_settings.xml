@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/sewer"
     android:theme="@style/Theme.AppCompat"
-    tools:context=".Settings">
+    tools:context="com.zombie.menu.Views.Settings">
 
     <Button
         android:id="@+id/startGame"
@@ -23,7 +23,7 @@
         android:layout_below="@id/startGame"
         android:layout_centerInParent="true"
         android:background="@android:color/darker_gray"
-        android:text="@string/background_color"
+        android:text="background Color"
         />
     <Button
         android:id="@+id/settings"
@@ -32,6 +32,13 @@
         android:layout_below="@id/load"
         android:layout_centerInParent="true"
         android:background="@android:color/darker_gray"
-        android:text="@string/player_color"
+        android:text="player Color"
         />
+
+    <ToggleButton
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ToggleButton" />
+
 </RelativeLayout>

@@ -1,11 +1,10 @@
-package com.zombie.game;
+package com.zombie.menu.Views;
 /**
- * This class will hold a save state of the player's progress in the game.
+ * This class will hold the state of a player's progress in the game by saving to and from the database.
  *
  * @author Ezrie Brant
- * @author David Chan
  * @author Francis Ynoa
- * Last Updated: 10/28/2019
+ * Last Updated: 11/24/2019
  */
 
 import android.app.Activity;
@@ -14,20 +13,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.zombie.game.R;
+import com.zombie.menu.R;
 
 import java.io.FileNotFoundException;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import Database.DBTranslator;
 
-import static com.zombie.game.R.layout.activity_save_state;
-
 public class SaveState extends Activity {
 
     //Linked list that will hold current game's data to save or load a game state given this list.
-    LinkedList<String> saveObjects = new LinkedList<String>();
+    //Used by save and load methods.
+    LinkedList<String> saveObjects = new LinkedList<>();
 
     //Create the context needed for opening/editing files.
     Context ctx = this;
@@ -41,11 +38,18 @@ public class SaveState extends Activity {
     enum buttonType {
         LOAD, SAVE, DELETE;
     }
+
+    /**
+     * Sets the screen to the related XML, creates the save files, and initializes the button functions.
+     *
+     * @param _savedInstanceState
+     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle _savedInstanceState) {
+
         //Sets the related XML document on the screen.
-        super.onCreate(savedInstanceState);
-        setContentView(activity_save_state);
+        super.onCreate(_savedInstanceState);
+        setContentView(R.layout.activity_save_state);
 
         //Buttons that write to the save files.
         final Button SAVE_FILE_1 = findViewById(R.id.button_save1);
@@ -83,9 +87,15 @@ public class SaveState extends Activity {
         createButton(DELETE_FILE_3, buttonType.DELETE);
     }
 
+    /**
+     * Given a button and button type, apply the button's function when it's clicked.
+     *
+     * @param _button
+     * @param _type
+     */
     private void createButton(final Button _button, final buttonType _type) {
 
-        //Create a button object and click response.
+        //Create a button click response.
         _button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,7 +103,7 @@ public class SaveState extends Activity {
                 //Set the button's function depending on given button type.
                 if (_type.equals(buttonType.SAVE)) {
                     save(saveObjects, _button);
-                } else if (_type.equals(buttonType.LOAD)){
+                } else if (_type.equals(buttonType.LOAD)) {
                     load(_button);
                 } else if (_type.equals(buttonType.DELETE)) {
                     delete(_button);
@@ -102,18 +112,24 @@ public class SaveState extends Activity {
         });
     }
 
-    //Given a button, return the file associated with it.
-    private String getFileName(Button _button){
+    /**
+     * Given a button, return the file associated with it.
+     * NOTE: Searches for the file number in reverse order so, for example, 11 is found before 1.
+     *
+     * @param _button
+     * @return FILE_NAME_#
+     */
+    private String getFileName(Button _button) {
 
         try {
-            if (_button.getTag().toString().contains("1")) {
-                return FILE_NAME_1;
+            if (_button.getTag().toString().contains("3")) {
+                return FILE_NAME_3;
             } else
             if (_button.getTag().toString().contains("2")) {
                 return FILE_NAME_2;
             } else
-            if (_button.getTag().toString().contains("3")) {
-                return FILE_NAME_3;
+            if (_button.getTag().toString().contains("1")) {
+                return FILE_NAME_1;
             } else {
                 throw new FileNotFoundException();
             }
@@ -124,14 +140,19 @@ public class SaveState extends Activity {
         return null;
     }
 
-    //Method that saves the current game state to a file.
+    /**
+     * Method that saves the current game state to a file.
+     * Currently hold dummy data.
+     *
+     * @param _savedObjects
+     * @param _button
+     */
     public void save(LinkedList<String> _savedObjects, Button _button) {
         //Put objects gotten from current game state in a linked list.
         String fileName = getFileName(_button);
 
-        //Dummy data
-        _savedObjects.add("Test");
-        _savedObjects.add("Data:340");
+        _savedObjects.add("");
+        _savedObjects.add("");
 
         //Pass all to translator.
         DBTranslator.updateObject(ctx, fileName, _savedObjects);
@@ -140,39 +161,26 @@ public class SaveState extends Activity {
         _savedObjects.clear();
     }
 
-    //Method that overrides current game state with given save file.
+    /**
+     * Method that overrides current game state with given save file.
+     *
+     * @param _button
+     */
     public void load(Button _button) {
         //Get information from button on which save slot is being loaded.
         String fileName = getFileName(_button);
 
         //Pass all to translator.
         saveObjects = DBTranslator.readObject(ctx, fileName);
-
-        parser(saveObjects);
     }
 
+    /**
+     * Clears the file associated with the button pressed.
+     *
+     * @param _button
+     */
     public void delete(Button _button) {
         String fileName = getFileName(_button);
         DBTranslator.deleteObject(ctx, fileName);
-    }
-
-    protected void parser(LinkedList _data){
-        //Given linked list, set the current game's values from data.
-
-        //Parses the dummy data
-        for (Object dataObj : _data) {
-            String element = dataObj.toString();
-
-            if (element.contains("Test")) {
-                //Save to current game.
-                System.out.println(element);
-
-            } else if (element.contains("Data")) {
-                int index = element.indexOf(':');
-                String dataElement = element.substring(index + 1);
-                //Save to current game.
-                System.out.println(dataElement);
-            }
-        }
     }
 }
