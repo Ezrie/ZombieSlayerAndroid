@@ -3,30 +3,148 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.badlogic.mariogame.SaveState">
-
-    <EditText
-        android:id="@+id/edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="200dp" />
+    android:background="@drawable/sewer"
+    android:theme="@style/Theme.AppCompat"
+    tools:context=".Views.SaveState">
 
     <Button
-        android:id="@+id/button_save"
+        android:id="@+id/button_save1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/edit_text"
+        android:layout_alignTop="@id/button_save2"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="save"
-        android:onClick="save"/>
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="100dp"
+        android:layout_toLeftOf="@id/button_save2"
+        android:tag="save1"
+        android:text="save" />
 
     <Button
-        android:id="@+id/button_load"
+        android:id="@+id/button_save2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/button_save"
-        android:layout_below="@+id/button_save"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="125dp"
+        android:tag="save2"
+        android:text="save" />
+
+    <Button
+        android:id="@+id/button_save3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/button_save2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="0dp"
+        android:layout_toRightOf="@id/button_save2"
+        android:tag="save3"
+        android:text="save" />
+
+    <Button
+        android:id="@+id/button_load1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_save2"
+        android:layout_centerInParent="true"
         android:layout_marginTop="17dp"
-        android:text="load"
-        android:onClick="load"/>
+        android:layout_marginEnd="100dp"
+        android:layout_toLeftOf="@id/button_load2"
+        android:tag="load1"
+        android:text="load" />
+
+    <Button
+        android:id="@+id/button_load2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_save2"
+        android:layout_alignStart="@id/button_save2"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="17dp"
+        android:tag="load2"
+        android:text="load" />
+
+    <Button
+        android:id="@+id/button_load3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_save2"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="17dp"
+        android:layout_toRightOf="@id/button_load2"
+        android:tag="load3"
+        android:text="load" />
+
+    <Button
+        android:id="@+id/button_delete1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_load2"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="100dp"
+        android:layout_toLeftOf="@id/button_load2"
+        android:tag="delete1"
+        android:text="delete" />
+
+    <Button
+        android:id="@+id/button_delete2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_load2"
+        android:layout_alignStart="@id/button_save2"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="17dp"
+        android:tag="delete2"
+        android:text="delete" />
+
+    <Button
+        android:id="@+id/button_delete3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_load2"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="17dp"
+        android:layout_toRightOf="@id/button_load2"
+        android:tag="delete3"
+        android:text="delete" />
+
+    <TextView
+        android:id="@+id/label1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/button_save1"
+        android:layout_marginEnd="85dp"
+        android:layout_toLeftOf="@id/label2"
+        android:text="Save Slot 1"
+        android:textAlignment="textStart"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/label2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/button_save1"
+        android:layout_centerHorizontal="true"
+        android:text="Save Slot 2"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/label3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/button_save1"
+        android:layout_marginStart="85dp"
+        android:layout_toRightOf="@id/label2"
+        android:text="Save Slot 3"
+        android:textAlignment="textEnd"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
 </RelativeLayout>
