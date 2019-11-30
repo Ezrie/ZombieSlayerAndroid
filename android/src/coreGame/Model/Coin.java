@@ -20,6 +20,7 @@ public class Coin extends InteractiveTileObject{
     public Coin(PlayScreen _screen, Rectangle _bounds){
         super(_screen, _bounds);
         fixture.setUserData(this);
+        fixture.setSensor(true);
         setCategoryFilter(GameConstants.COIN_BIT);
     }
 

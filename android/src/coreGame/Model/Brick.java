@@ -28,7 +28,7 @@ public class Brick extends InteractiveTileObject {
     @Override
     public void objectHit() {
         Gdx.app.log("Brick", "Collision");
-        setCategoryFilter(GameConstants.DESTROYED_BIT);
+        //setCategoryFilter(GameConstants.DESTROYED_BIT);
         //getCell().setTile(null);
 
     }
@@ -36,21 +36,21 @@ public class Brick extends InteractiveTileObject {
     @Override
     public void survivorCollision() {
         Gdx.app.log("Survivor-Brick", "Collision");
-        setCategoryFilter(GameConstants.DESTROYED_BIT);
-        getCell().setTile(null);
+        //setCategoryFilter(GameConstants.DESTROYED_BIT);
+        //getCell().setTile(null);
     }
 
     @Override
     public void zombieHit() {
         Gdx.app.log("Zombie-Brick", "Collision");
-        setCategoryFilter(GameConstants.DESTROYED_BIT);
-        getCell().setTile(null);
+        //setCategoryFilter(GameConstants.DESTROYED_BIT);
+        //getCell().setTile(null);
     }
 
     @Override
     public void bulletHit() {
         Gdx.app.log("Brick", "Collision");
-        setCategoryFilter(GameConstants.DESTROYED_BIT);
-        getCell().setTile(null);
+        //setCategoryFilter(GameConstants.DESTROYED_BIT);
+        //getCell().setTile(null);
     }
 }

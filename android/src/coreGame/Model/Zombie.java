@@ -45,6 +45,8 @@ public class Zombie extends Enemy {
         //Makes the zombie body dynamic; the survivor is affected by the physics in the box 2d world.
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
+        // Continuous damage
+        b2body.setBullet(true);
 
         //This creates the polygon shape/fixture of the survivor that will collide with objects.
         FixtureDef fdef = new FixtureDef();

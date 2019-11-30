@@ -130,15 +130,31 @@ public class PlayScreen implements Screen {
         speedX = player.b2body.getLinearVelocity().x;
         speedY = player.b2body.getLinearVelocity().y;
 
+        // X and Y coordinates of the screen:
+        // (0,0)           (0,+)
+        //
+        //
+        //
+        //
+        // (-,0)           (-,+)
+
         //On a button press, an impulse is applied to the player in a specific direction.
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) && speedY <= POS_MAX_SPEED)
-            player.b2body.applyLinearImpulse(new Vector2(0, 0.1f), player.b2body.getWorldCenter(), true);
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && speedX <= POS_MAX_SPEED)
-            player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && speedX >= NEG_MAX_SPEED)
-            player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && speedY >= NEG_MAX_SPEED)
+        if (Gdx.input.isTouched() && (Gdx.input.getY() < player.getPositionY()) && speedY <= POS_MAX_SPEED) {
+            //if (Gdx.input.isKeyPressed(Input.Keys.UP) && speedY <= POS_MAX_SPEED)
             player.b2body.applyLinearImpulse(new Vector2(0, -0.1f), player.b2body.getWorldCenter(), true);
+        }
+        if (Gdx.input.isTouched() && (Gdx.input.getX() > player.getPositionX()) && speedY <= POS_MAX_SPEED) {
+            //if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && speedX <= POS_MAX_SPEED)
+            player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
+        }
+        if (Gdx.input.isTouched() && (Gdx.input.getX() < player.getPositionX()) && speedY <= POS_MAX_SPEED) {
+            //if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && speedX >= NEG_MAX_SPEED)
+            player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+        }
+        if (Gdx.input.isTouched() && (Gdx.input.getY() > player.getPositionY()) && speedY <= POS_MAX_SPEED) {
+            //if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && speedY >= NEG_MAX_SPEED)
+            player.b2body.applyLinearImpulse(new Vector2(0, 0.1f), player.b2body.getWorldCenter(), true);
+        }
     }
 
     /**

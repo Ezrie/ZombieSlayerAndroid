@@ -41,6 +41,8 @@ public class AndroidLauncher extends AndroidApplication {
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+        config.useAccelerometer = false;
+        config.useCompass = false;
         initialize(new ZombieGame(), config);
 
         //Puts the device into immersion mode (hide the top navigation bars) if the device has that feature (KitKat and up)

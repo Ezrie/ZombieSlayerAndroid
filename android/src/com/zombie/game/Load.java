@@ -20,7 +20,7 @@ import com.zombie.game.R;
 
 public class Load extends Activity {
 
-    private int timeWait = 5000; //This number is used for milliseconds.
+    private int timeWait = 1000; //This number is used for milliseconds.
 
     @Override
     protected void onCreate(Bundle _savedInstanceState) {

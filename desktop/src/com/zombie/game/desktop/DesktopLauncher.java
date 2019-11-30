@@ -8,13 +8,9 @@ package com.zombie.game.desktop;
  * Last Updated: 10/02/2019
  */
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import coreGame.Game.ZombieGame;
-
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new ZombieGame(), config);
+		//LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		//new LwjglApplication(new ZombieGame(), config);
 	}
 }

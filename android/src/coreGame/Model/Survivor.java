@@ -10,15 +10,19 @@ import coreGame.Util.GameConstants;
 import coreGame.View.Screens.PlayScreen;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 
 public class Survivor extends Sprite {
     public World world;
     public Body b2body;
+    public Vector2 startPos = new Vector2(100 / GameConstants.PPM, 100 / GameConstants.PPM);
 
     public int healthPoints;
     private TextureRegion survivorStand;
@@ -41,10 +45,11 @@ public class Survivor extends Sprite {
      */
     public void defineSurvivor(){
         BodyDef bdef = new BodyDef();
-        bdef.position.set(32 / GameConstants.PPM,32 / GameConstants.PPM);
+        bdef.position.set(startPos);
         //Makes the survivor body dynamic; the survivor is affected by the physics in the box 2d world.
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
+        b2body.setBullet(true);
 
         //This creates the polygon shape/fixture of the survivor that will collide with objects.
         FixtureDef fdef = new FixtureDef();
@@ -71,7 +76,7 @@ public class Survivor extends Sprite {
      * @param _dt is delta time.
      */
     public void update(float _dt){
-        setPosition(getPositionX(), getPositionY());
+        this.setPosition(getPositionX(), getPositionY());
     }
 
     //==================================== Getters ==================================
