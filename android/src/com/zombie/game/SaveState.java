@@ -27,7 +27,7 @@ import static com.zombie.game.R.layout.activity_save_state;
 public class SaveState extends Activity {
 
     //Linked list that will hold current game's data to save or load a game state given this list.
-    LinkedList<String> saveObjects = new LinkedList<>();
+    LinkedList<String> saveObjects = new LinkedList<String>();
 
     //Create the context needed for opening/editing files.
     Context ctx = this;
@@ -125,7 +125,7 @@ public class SaveState extends Activity {
     }
 
     //Method that saves the current game state to a file.
-    public void save(LinkedList _savedObjects, Button _button) {
+    public void save(LinkedList<String> _savedObjects, Button _button) {
         //Put objects gotten from current game state in a linked list.
         String fileName = getFileName(_button);
 
