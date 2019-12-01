@@ -11,11 +11,12 @@ package com.zombie.menu.Views;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.zombie.menu.Controller.GameController;
+import com.zombie.menu.Controller.GameLauncher;
 import com.zombie.menu.R;
 
 import java.util.Timer;
@@ -48,13 +49,15 @@ public class Load extends AppCompatActivity {
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                counter++;
-                textView.setText("%" + counter);
-                progressBar.setProgress(counter);
+                if (counter < 100) {
+                    counter++;
+                    textView.setText("%" + counter);
+                    progressBar.setProgress(counter);
+                }
                 if(counter == 100){
                     t.cancel();
-                    Intent load = new Intent(getApplicationContext(), GameController.class);
-                    startActivity(load);
+                    Intent launch = new Intent(getApplicationContext(), GameLauncher.class);
+                    startActivity(launch);
                 }
             }
         };

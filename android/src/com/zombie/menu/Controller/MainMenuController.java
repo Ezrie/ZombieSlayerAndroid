@@ -1,7 +1,7 @@
 package com.zombie.menu.Controller;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.zombie.menu.Models.ApplicationModel;
 import com.zombie.menu.R;

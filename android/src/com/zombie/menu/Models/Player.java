@@ -3,7 +3,7 @@ package com.zombie.menu.Models;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 
 import com.zombie.menu.R;
 

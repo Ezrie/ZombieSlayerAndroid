@@ -1,6 +1,6 @@
 package com.zombie.menu.Views;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 
 public class Window {
