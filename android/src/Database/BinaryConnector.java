@@ -1,4 +1,12 @@
 package Database;
+/**
+ * This class defines the CRUD operations for when a binary file is used for data storage.
+ *
+ * @author Ezrie Brant
+ * Last Updated: 11/12/2019
+ */
+
+import android.content.Context;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,31 +15,30 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
-import android.content.Context;
-
-import coreGame.View.Screens.PlayScreen;
-
 
 public class BinaryConnector implements DBConnectorInterface {
 
     private FileOutputStream fos = null;
 
-    //Create an empty save file, the default constructor that's called when first starting the app.
-    //Uses FileOutputStream
+    /**
+     * Create an empty save file, the default constructor that's called when first starting the app.
+     *
+     * @param _ctx
+     * @param _file
+     */
     @Override
-    public void createObject(Context ctx, String file) {
+    public void createObject(Context _ctx, String _file) {
+
         try {
-            String fileName = file + ".txt";
+            String fileName = _file + ".txt";
             //Will create file if non-existent. Otherwise will open it.
-            fos = ctx.openFileOutput(fileName, Context.MODE_PRIVATE);
+            fos = _ctx.openFileOutput(fileName, Context.MODE_PRIVATE);
 
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+
             //If stream is open, close it (prevent memory leaks).
             if (fos != null) {
                 try {
@@ -43,9 +50,16 @@ public class BinaryConnector implements DBConnectorInterface {
         }
     }
 
+    /**
+     * Opens the file, reads the content, and adds it to a linked list to return.
+     *
+     * @param _ctx
+     * @param _file
+     * @return
+     */
     @Override
-    public LinkedList<String> readObject(Context ctx, String file) {
-        String fileName = file + ".txt";
+    public LinkedList<String> readObject(Context _ctx, String _file) {
+        String fileName = _file + ".txt";
 
         //Opens file, parses data from file and inserts into linked list.
         LinkedList<String> dataFromFile = new LinkedList<>();
@@ -54,7 +68,7 @@ public class BinaryConnector implements DBConnectorInterface {
         FileInputStream fis = null;
 
         try {
-            fis = ctx.openFileInput(fileName);
+            fis = _ctx.openFileInput(fileName);
             //Check if current data exists, if not then don't continue.
             File fileObj = new File(fileName);
             if(!fileObj.exists()){
@@ -69,7 +83,6 @@ public class BinaryConnector implements DBConnectorInterface {
             while ((text = br.readLine()) != null) {
                 sb.append(text).append("\n");
             }
-            System.out.println("" + sb);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -87,17 +100,24 @@ public class BinaryConnector implements DBConnectorInterface {
         return dataFromFile;
     }
 
+    /**
+     * Opens and empties the save file, and puts the data from a LinkedList into the file.
+     *
+     * @param _ctx
+     * @param _file
+     * @param _data
+     */
     @Override
-    public void updateObject(Context ctx, String file, LinkedList data) {
-        String fileName = file + ".txt";
+    public void updateObject(Context _ctx, String _file, LinkedList _data) {
+        String fileName = _file + ".txt";
 
         try {
             //Will delete content if there's any. Otherwise will open a empty file.
-            fos = ctx.openFileOutput(fileName, Context.MODE_PRIVATE);
+            fos = _ctx.openFileOutput(fileName, Context.MODE_PRIVATE);
 
             //Write to file
-            String dataStr = data.toString();
-            String elem = data.element().toString();
+            String dataStr = _data.toString();
+            String elem = _data.element().toString();
             fos.write(dataStr.getBytes());
             fos.write(elem.getBytes());
 
@@ -115,14 +135,20 @@ public class BinaryConnector implements DBConnectorInterface {
         }
     }
 
+    /**
+     * Opens and clears any text in the save file. Does not delete file itself.
+     *
+     * @param _ctx
+     * @param _file
+     */
     @Override
-    public void deleteObject(Context ctx, String file) {
-        //Opens file, deletes content. Note: Does not delete file itself.
-        String fileName = file + ".txt";
+    public void deleteObject(Context _ctx, String _file) {
+
+        String fileName = _file + ".txt";
 
         try {
             //Will delete content if there's any.
-            fos = ctx.openFileOutput(fileName, Context.MODE_PRIVATE);
+            fos = _ctx.openFileOutput(fileName, Context.MODE_PRIVATE);
             fos.close();
 
         } catch (IOException e) {

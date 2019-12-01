@@ -1,4 +1,4 @@
-package com.zombie.game;
+package com.zombie.menu.Controller;
 /**
  * This class is the file that launches for Android devices and emulators.
  *
@@ -17,7 +17,7 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
 import coreGame.Game.ZombieGame;
 
-public class AndroidLauncher extends AndroidApplication {
+public class GameLauncher extends AndroidApplication {
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
