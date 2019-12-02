@@ -8,6 +8,11 @@ package coreGame.View.Scenes;
  * Last Updated: 10/29/2019
  */
 
+import android.content.Context;
+import android.view.MotionEvent;
+import android.view.SurfaceView;
+
+import coreGame.Model.Joystick;
 import coreGame.Model.Survivor;
 import coreGame.Util.GameConstants;
 import com.badlogic.gdx.graphics.Color;
@@ -22,14 +27,27 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class HUD implements Disposable {
+import java.util.Locale;
+
+/*
+
+Wireframe
+System Architecture
+Joystick
+
+*/
+
+public class HUD extends SurfaceView implements Disposable {
 
     //Creates a new stage and viewport where the HUD will be in.
     public Stage stage;
     private Viewport viewport;
 
+    //Joystick that will be used for movement.
+    private Joystick joystick;
+
     //Font and color of the HUD items.
-    private static Label.LabelStyle textFont = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
+    private static Label.LabelStyle textFont;
 
     //HUD literals.
     private Integer worldTimer = 300;
@@ -56,12 +74,18 @@ public class HUD implements Disposable {
      *
      * @param sb
      */
-    public HUD(SpriteBatch sb) {
-
+    public HUD(SpriteBatch sb, Context ctx) {
+        super(ctx);
         //Create a new camera showing a stage that will hold the HUD. The viewport is the same size as the world.
         OrthographicCamera viewCamera = new OrthographicCamera();
         viewport = new FitViewport(GameConstants.V_WIDTH, GameConstants.V_HEIGHT, viewCamera);
         stage = new Stage(viewport, sb);
+
+        textFont = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
+
+
+        //Joystick movement controls.
+        joystick = new Joystick(275, 700, 70, 40);
 
         //Creates a table at the top of the game's window.
         Table table = new Table();
@@ -82,6 +106,31 @@ public class HUD implements Disposable {
         stage.addActor(table);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+
+        // Handle touch event actions
+        switch(event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                if(joystick.isPressed((double) event.getX(), (double) event.getY())){
+                    joystick.setIsPressed(true);
+                }
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                if(joystick.getIsPressed()){
+                    joystick.setActuator((double) event.getX(), (double) event.getY());
+                }
+                return  true;
+            case MotionEvent.ACTION_UP:
+                joystick.setIsPressed(false);
+                joystick.resetActuator();
+                return true;
+
+        }
+
+        return super.onTouchEvent(event);
+    }
+
     public void update(float _dt){
         timeCount += _dt;
         if (timeCount >= 1){
@@ -94,12 +143,12 @@ public class HUD implements Disposable {
 
     public static void changeHealth(int _value){
         healthLabel -= _value;
-        healthHUD.setText(String.format("%03d", healthLabel));
+        healthHUD.setText(String.format(Locale.getDefault(),"%03d", healthLabel));
     }
 
     public static void addScore(int _value){
         scoreCount += _value;
-        scoreHUD.setText(String.format("%06d", scoreCount));
+        scoreHUD.setText(String.format(Locale.getDefault(),"%06d", scoreCount));
     }
 
     @Override

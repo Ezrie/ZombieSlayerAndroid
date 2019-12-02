@@ -14,15 +14,19 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
 
 public class Survivor extends Sprite {
     public World world;
     public Body b2body;
     public Vector2 startPos = new Vector2(100 / GameConstants.PPM, 100 / GameConstants.PPM);
+    private final float MAX_SPEED = 1f;
+    float velocityX;
+    float velocityY;
+    float positionX;
+    float positionY;
+    float DAMPING = 10f;
 
     public int healthPoints;
     private TextureRegion survivorStand;
@@ -50,6 +54,8 @@ public class Survivor extends Sprite {
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
         b2body.setBullet(true);
+        //Linear damping slows down the player movement if no keys are being pressed.
+        b2body.setLinearDamping(DAMPING);
 
         //This creates the polygon shape/fixture of the survivor that will collide with objects.
         FixtureDef fdef = new FixtureDef();
@@ -73,10 +79,13 @@ public class Survivor extends Sprite {
 
     /**
      * This will update the position of the Survivor sprite with its polygon.
-     * @param _dt is delta time.
+     * @param joystick is the controller for movement.
      */
-    public void update(float _dt){
-        this.setPosition(getPositionX(), getPositionY());
+    public void update(Joystick joystick) {
+        velocityX = joystick.getActuatorX() * MAX_SPEED;
+        velocityY = joystick.getActuatorY() * MAX_SPEED;
+        positionX += velocityX;
+        positionY += velocityY;
     }
 
     //==================================== Getters ==================================

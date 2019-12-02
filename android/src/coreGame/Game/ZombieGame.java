@@ -7,11 +7,14 @@ package coreGame.Game;
  * Last Updated: 10/06/2019
  */
 
+import android.content.Context;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import coreGame.View.Screens.PlayScreen;
 
 public class ZombieGame extends Game {
+	private Context ctx;
 
 	//Declaring the graphics of the game. Used by all other classes and is memory heavy.
 	public SpriteBatch batch;
@@ -22,7 +25,7 @@ public class ZombieGame extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		setScreen(new PlayScreen(this));
+		setScreen(new PlayScreen(this, ctx));
 	}
 
 	/**
