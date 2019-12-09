@@ -7,7 +7,10 @@ package coreGame.Model;
  * Last Updated: 11/14/2019
  */
 import coreGame.Util.GameConstants;
+import coreGame.View.Scenes.HUD;
 import coreGame.View.Screens.PlayScreen;
+
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -20,28 +23,27 @@ import com.badlogic.gdx.physics.box2d.World;
 public class Survivor extends Sprite {
     public World world;
     public Body b2body;
-    public Vector2 startPos = new Vector2(100 / GameConstants.PPM, 100 / GameConstants.PPM);
+    public Vector2 startPos = new Vector2(800 / GameConstants.PPM, 700 / GameConstants.PPM);
     private final float MAX_SPEED = 1f;
-    float velocityX;
-    float velocityY;
-    float positionX;
-    float positionY;
     float DAMPING = 10f;
-
     public int healthPoints;
-    private TextureRegion survivorStand;
+    private TextureRegion sTexture;
+    private Sprite sprite;
+    public final Vector2 ZERO_VECTOR = new Vector2(0, 0);
 
     public Survivor(PlayScreen _screen){
-        //Gets texture of the survivor.
-        super(_screen.getTextures()[4][5]);
-
         this.world = _screen.getWorld();
+
         defineSurvivor();
-        survivorStand = _screen.getTextures()[4][5];
-        setBounds(0, 0, 16 / GameConstants.PPM, 16 / GameConstants.PPM);
-        setRegion(survivorStand);
         setHealthPoints(100);
 
+        TextureRegion tex = _screen.getTextures()[4][5];
+        sTexture = new TextureRegion(tex);
+        //Sets textures to the coordinates defined by the sprite batch (from getTextures[coords]).
+        this.setRegion(sTexture);
+
+        sprite = new Sprite(sTexture);
+        sprite.setBounds(sprite.getX(), sprite.getY(), 16 / GameConstants.PPM, 16 / GameConstants.PPM);
     }
 
     /**
@@ -53,7 +55,7 @@ public class Survivor extends Sprite {
         //Makes the survivor body dynamic; the survivor is affected by the physics in the box 2d world.
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
-        b2body.setBullet(true);
+        //b2body.setBullet(true);
         //Linear damping slows down the player movement if no keys are being pressed.
         b2body.setLinearDamping(DAMPING);
 
@@ -77,32 +79,58 @@ public class Survivor extends Sprite {
         b2body.createFixture(fdef).setUserData("survivor");
     }
 
-    /**
-     * This will update the position of the Survivor sprite with its polygon.
-     * @param joystick is the controller for movement.
-     */
-    public void update(Joystick joystick) {
-        velocityX = joystick.getActuatorX() * MAX_SPEED;
-        velocityY = joystick.getActuatorY() * MAX_SPEED;
-        positionX += velocityX;
-        positionY += velocityY;
+    public void update(float _dt, HUD hud) {
+        if (hud.handleJoystickInput().equals(ZERO_VECTOR)) {
+            setVelocity(ZERO_VECTOR);
+        } else {
+            if (getVelocityX() <= MAX_SPEED) {
+                setVelocity(new Vector2(getVelocityX() + (hud.handleJoystickInput().x / 5), getVelocityY() ));
+            }
+            if (getVelocityY() <= MAX_SPEED) {
+                setVelocity(new Vector2(getVelocityX(), getVelocityY() + (hud.handleJoystickInput().y / 5) ));
+            }
+        }
+        this.sprite.setPosition(this.getPositionX(), this.getPositionY());
+    }
+
+    public void draw(Batch batch) {
+        super.draw(batch);
+        this.sprite.draw(batch);
+    }
+
+    public void dispose() {
+        sprite.getTexture().dispose();
     }
 
     //==================================== Getters ==================================
     public float getPositionX(){
-        return b2body.getPosition().x - getWidth() / 2;
+        return b2body.getPosition().x - (sprite.getWidth() / 2f);
     }
 
     public float getPositionY(){
-        return b2body.getPosition().y - getHeight() / 2;
+        return b2body.getPosition().y - (sprite.getWidth() / 2f);
     }
+
     public int getHealthPoints() {
         return healthPoints;
+    }
+
+    public float getVelocityX() {
+        return b2body.getLinearVelocity().x;
+    }
+
+    public float getVelocityY() {
+        return b2body.getLinearVelocity().y;
     }
 
     //=================================== Setters =====================================
     public void setHealthPoints(int _healthPoints) {
         this.healthPoints = _healthPoints;
     }
+
+    public void setVelocity(Vector2 _velocity) {
+        this.b2body.setLinearVelocity(_velocity);
+    }
+
 
 }

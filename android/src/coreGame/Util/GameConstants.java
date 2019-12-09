@@ -1,4 +1,7 @@
 package coreGame.Util;
+
+import com.badlogic.gdx.math.Vector2;
+
 /**
  * This class contains the constants used across multiple classes.
  *

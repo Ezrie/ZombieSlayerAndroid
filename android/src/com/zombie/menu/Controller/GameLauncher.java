@@ -43,7 +43,8 @@ public class GameLauncher extends AndroidApplication {
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         config.useAccelerometer = false;
         config.useCompass = false;
-        initialize(new ZombieGame(), config);
+        ZombieGame game = new ZombieGame(getContext());
+        initialize(game, config);
 
         //Puts the device into immersion mode (hide the top navigation bars) if the device has that feature (KitKat and up)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

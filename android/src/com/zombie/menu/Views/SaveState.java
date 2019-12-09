@@ -151,7 +151,7 @@ public class SaveState extends Activity {
         //Put objects gotten from current game state in a linked list.
         String fileName = getFileName(_button);
 
-        _savedObjects.add("");
+        _savedObjects.add("test");
         _savedObjects.add("");
 
         //Pass all to translator.

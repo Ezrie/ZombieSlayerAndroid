@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.zombie.menu.Controller.GameController;
 import com.zombie.menu.Controller.GameLauncher;
 import com.zombie.menu.R;
 
@@ -51,33 +50,16 @@ public class Load extends AppCompatActivity {
             public void run() {
                 if (counter < 100) {
                     counter++;
-                    textView.setText("%" + counter);
+                    textView.setText("" + counter + "%");
                     progressBar.setProgress(counter);
                 }
-                if(counter == 100){
+                if (counter == 100) {
                     t.cancel();
                     Intent launch = new Intent(getApplicationContext(), GameLauncher.class);
                     startActivity(launch);
                 }
             }
         };
-        t.schedule(tt,0,100);
-
-
-    }
-
-    /**
-     * This method adds a wait time before the load screen transitions to the game.
-     */
-    public void nextActivity() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                Intent mainIntent = new Intent(Load.this, GameController.class);
-                Load.this.startActivity(mainIntent);
-                Load.this.finish();
-            }
-        }, timeWait);
+        t.schedule(tt, 0, 50);
     }
 }

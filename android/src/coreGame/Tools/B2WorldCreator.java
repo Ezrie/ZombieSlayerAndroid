@@ -36,6 +36,13 @@ public class B2WorldCreator {
         FixtureDef fdef = new FixtureDef();
         Body body;
 
+        //Next level tile; looks like the stairs.
+        for (MapObject object : map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+            new Default(screen, rect);
+        }
+
         //Map edge; non-collidable.
         for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
@@ -59,8 +66,8 @@ public class B2WorldCreator {
 
         //This creates all zombies from the tile map for this level.
         zombies = new Array<Zombie>();
-        //Layer 7 is the "next level" block; looks like stairs.
-        for (MapObject object : map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
+        //Layer 8 are the pre-defined spawn tiles from the tile map.
+        for (MapObject object : map.getLayers().get(8).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
             zombies.add(new Zombie(screen, rect.getX() / GameConstants.PPM, rect.getY() / GameConstants.PPM));
         }

@@ -9,6 +9,7 @@ package com.zombie.menu.Views;
  * Last Updated: 10/02/2019
  */
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -31,6 +32,7 @@ import com.zombie.menu.R;
 
 public class MainMenu extends AppCompatActivity {
 
+    Context ctx;
 
     private static final int RC_SIGN_IN = 0;
     private Button startGame;
@@ -49,6 +51,8 @@ public class MainMenu extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
+
+        ctx = MainMenu.this;
 
         //How the class will look
         setContentView(R.layout.activity_main_menu);
@@ -176,6 +180,10 @@ public class MainMenu extends AppCompatActivity {
             Log.w("Error", "signInResult:failed code=" + e.getStatusCode());
             //updateUI(null);
         }
+    }
+
+    public Context getContext() {
+        return ctx;
     }
 
 }
