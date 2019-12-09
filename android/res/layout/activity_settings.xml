@@ -5,40 +5,66 @@
     android:layout_height="match_parent"
     android:background="@drawable/sewer"
     android:theme="@style/Theme.AppCompat"
-    tools:context="com.zombie.menu.Views.Settings">
+    tools:context=".Views.Settings">
 
     <Button
-        android:id="@+id/startGame"
+        android:id="@+id/btnMusic"
         android:layout_width="200dp"
         android:layout_height="60dp"
         android:layout_marginTop="70dp"
-        android:layout_centerHorizontal="true"
+        android:layout_marginStart="158dp"
         android:background="@android:color/darker_gray"
-        android:text="@string/difficulty"
+        android:text="@string/music"
         />
     <Button
-        android:id="@+id/load"
+        android:id="@+id/btnSoundEffect"
         android:layout_width="200dp"
         android:layout_height="60dp"
-        android:layout_below="@id/startGame"
-        android:layout_centerInParent="true"
+        android:layout_below="@id/btnMusic"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="158dp"
         android:background="@android:color/darker_gray"
-        android:text="background Color"
+        android:text="@string/sound_effects"
         />
     <Button
         android:id="@+id/settings"
         android:layout_width="200dp"
         android:layout_height="60dp"
-        android:layout_below="@id/load"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:layout_below="@id/btnSoundEffect"
         android:background="@android:color/darker_gray"
-        android:text="player Color"
+        android:text="@string/language"
         />
 
     <ToggleButton
-        android:id="@+id/toggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ToggleButton" />
+        android:id="@+id/toggleMusic"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_alignStart="@id/btnMusic"
+        android:layout_alignBottom="@id/btnMusic"
+        android:layout_marginStart="199dp"
+        android:layout_marginBottom="0dp"
+        android:onClick="buttonClicked"
+        />
+
+    <ToggleButton
+        android:id="@+id/toggleSoundEff"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_alignBottom="@id/btnSoundEffect"
+        android:layout_alignStart="@id/btnSoundEffect"
+        android:layout_marginStart="200dp"
+        />
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="120dp"
+        android:layout_height="55dp"
+        android:background="@android:color/holo_green_dark"
+        android:text="@string/back"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        android:onClick="buttonClicked"
+        />
 
 </RelativeLayout>

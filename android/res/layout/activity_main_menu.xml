@@ -5,116 +5,50 @@
     android:layout_height="match_parent"
     android:background="@drawable/cemetery"
     android:theme="@style/Theme.AppCompat"
-    tools:context="com.zombie.menu.Views.MainMenu">
+    tools:context=".Views.MainMenu">
 
 
     <Button
         android:id="@+id/btnStartGame"
         android:layout_width="200dp"
         android:layout_height="60dp"
-        android:layout_centerInParent="true"
-        android:layout_alignBottom="@id/btnLootBox"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="220dp"
         android:background="@android:color/holo_green_dark"
         android:text="@string/start_game"
         android:textColor="@android:color/black"
         android:textSize="24sp"
+        android:onClick="clicked"
         />
     <Button
         android:id="@+id/btnLoad"
         android:layout_width="150dp"
         android:layout_height="60dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignBottom="@id/btnStartGame"
+        android:layout_below="@id/btnStartGame"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="20dp"
         android:background="@android:color/holo_green_dark"
         android:textColor="@android:color/black"
         android:text="@string/load_game"
+        android:onClick="clicked"
         />
     <Button
         android:id="@+id/btnSettings"
         android:layout_width="60dp"
-        android:layout_height="50dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="5dp"
         android:layout_alignParentEnd="true"
-        android:background="@android:color/holo_green_dark"
-        android:textColor="@android:color/black"
-        android:text="@string/settings"
-        />
-    <Button
-        android:id="@+id/btnStore"
-        android:layout_width="68dp"
-        android:layout_height="60dp"
-        android:background="@android:color/holo_green_dark"
-        android:layout_marginTop="40dp"
-        android:layout_marginStart="20dp"
-        android:text="@string/store"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        />
-    <Button
-        android:id="@+id/btnSocial"
-        android:layout_width="68dp"
-        android:layout_height="60dp"
-        android:background="@android:color/holo_green_dark"
-        android:layout_below="@id/btnStore"
-        android:layout_alignStart="@id/btnStore"
-        android:layout_marginTop="20dp"
-        android:text="@string/social"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        />
-    <Button
-        android:id="@+id/btnCharacters"
-        android:layout_width="68dp"
-        android:layout_height="60dp"
-        android:background="@android:color/holo_green_dark"
-        android:layout_below="@id/btnSocial"
-        android:layout_alignStart="@id/btnSocial"
-        android:layout_marginTop="20dp"
-        android:text="@string/characters"
-        android:textColor="@android:color/black"
-        android:textSize="12sp"
-        />
-    <Button
-        android:id="@+id/btnLootBox"
-        android:layout_width="105dp"
-        android:layout_height="60dp"
-        android:background="@android:color/holo_green_dark"
-        android:layout_below="@id/btnCharacters"
-        android:layout_alignStart="@id/btnCharacters"
-        android:layout_marginTop="40dp"
-        android:text="@string/loot_box"
-        android:textColor="@android:color/black"
-        android:textSize="12sp"
-        />
-
-    <TextView
-        android:id="@+id/txtViewMoney"
-        android:layout_width="200dp"
-        android:layout_height="60dp"
-        android:background="@android:color/holo_green_dark"
-        android:layout_alignEnd="@id/sign_in_button"
-        android:layout_marginEnd="150dp"
-        android:text="@string/money"
-        android:textColor="@android:color/black"
-        android:gravity="center"
-
-        android:textSize="12sp"
-        />
-    <ImageView
-        android:id="@+id/characterImage"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:contentDescription="@string/characters"
-        android:layout_centerInParent="true"
-        android:background="@mipmap/ic_launcher"
+        android:background="@drawable/settings"
+        android:onClick="clicked"
         />
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="8dp"
         android:layout_alignEnd="@id/btnSettings"
         android:layout_marginEnd="70dp"
         />
-
-
 
 </RelativeLayout>

@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.zombie.menu.R;
 
 import java.io.FileNotFoundException;
@@ -20,11 +22,13 @@ import java.util.LinkedList;
 
 import Database.DBTranslator;
 
-public class SaveState extends Activity {
+public class SaveState extends AppCompatActivity {
 
     //Linked list that will hold current game's data to save or load a game state given this list.
     //Used by save and load methods.
     LinkedList<String> saveObjects = new LinkedList<>();
+
+    private Window window = new Window();
 
     //Create the context needed for opening/editing files.
     Context ctx = this;
@@ -50,7 +54,18 @@ public class SaveState extends Activity {
         //Sets the related XML document on the screen.
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.activity_save_state);
+        window.hideSystem(this);
 
+        Button backBtn = findViewById(R.id.btnBack);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //From Activity class (Android Studio)
+                finish();
+            }
+        });
+
+        //put into "initialize" method.
         //Buttons that write to the save files.
         final Button SAVE_FILE_1 = findViewById(R.id.button_save1);
         final Button SAVE_FILE_2 = findViewById(R.id.button_save2);
@@ -99,7 +114,6 @@ public class SaveState extends Activity {
         _button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 //Set the button's function depending on given button type.
                 if (_type.equals(buttonType.SAVE)) {
                     save(saveObjects, _button);
