@@ -45,7 +45,7 @@ public class PlayScreen implements Screen {
     private final float FPS = 1 / 60f;
 
     //This creates Survivor.
-    private Survivor player;
+    public Survivor player;
     //Declares a new game.
     private ZombieGame game;
     //Camera that follows the game.
@@ -86,7 +86,8 @@ public class PlayScreen implements Screen {
         player = new Survivor(this);
 
         gameCam = new OrthographicCamera();
-        gamePort = new ExtendViewport(2f, 2f, gameCam);
+        //Zoom level
+        gamePort = new ExtendViewport(1f, 1f, gameCam);
         //Camera starting position.
         float initCameraX = gamePort.getWorldWidth() / 2;
         float initCameraY = gamePort.getWorldHeight() / 2;
@@ -137,8 +138,6 @@ public class PlayScreen implements Screen {
 
         for (Enemy enemy : creator.getZombies()) {
             enemy.update(_dt);
-            if (enemy.getX() < player.getX() + 224 / GameConstants.PPM)
-                enemy.b2body.setActive(true);
         }
         //This makes the game camera follow the player.
         gameCam.position.x = player.getPositionX();

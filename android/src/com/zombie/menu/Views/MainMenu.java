@@ -10,28 +10,22 @@ package com.zombie.menu.Views;
  * Last Updated: 11/19/2019
  */
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.zombie.menu.R;
-
 
 public class MainMenu extends AppCompatActivity {
 
     private Button btnStartGame;
     private Button btnLoad;
     private Button btnSettings;
-    private Window window = new Window();
-    private GoogleSignInAPI googleSignIn;
+    private FullScreen fullScreen = new FullScreen();
+    private Button signIn;
 
 
     @Override
@@ -44,18 +38,11 @@ public class MainMenu extends AppCompatActivity {
         //Initialize all the button fields of this class.
         initialize();
 
-        //Sets the Google sign in button to launch the signin method whenever it is clicked.
-        googleSignIn.signIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleSignIn.signIn();
-            }
-        });
-
         //Plays Music throughout the application.
         Music.soundPlayer(this,R.raw.zombi);
 
-        this.window.hideSystem(this);
+        this.fullScreen.hideSystem(this);
+        this.fullScreen.checkSystem(this);
     }
 
     /*
@@ -72,7 +59,7 @@ public class MainMenu extends AppCompatActivity {
         this.btnStartGame = findViewById(R.id.btnStartGame);
         this.btnLoad = findViewById(R.id.btnLoad);
         this.btnSettings = findViewById(R.id.btnSettings);
-        this.googleSignIn = new GoogleSignInAPI(this);
+        this.signIn = findViewById(R.id.btnAccount);
     }
 
     /**
@@ -94,6 +81,10 @@ public class MainMenu extends AppCompatActivity {
             case R.id.btnSettings:
                 Intent toSettings = new Intent(getApplicationContext(), Settings.class);
                 startActivity(toSettings);
+                break;
+            case R.id.btnAccount:
+                Intent toGoogleSignInApiAdapter = new Intent(getApplicationContext(), GoogleSignInApi.class);
+                startActivity(toGoogleSignInApiAdapter);
                 break;
         }
     }

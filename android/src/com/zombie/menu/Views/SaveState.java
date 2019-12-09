@@ -26,9 +26,10 @@ public class SaveState extends AppCompatActivity {
 
     //Linked list that will hold current game's data to save or load a game state given this list.
     //Used by save and load methods.
-    LinkedList<String> saveObjects = new LinkedList<>();
+    public LinkedList<String> saveObjects = new LinkedList<>();
+    public final static String defaultFile = "1";
 
-    private Window window = new Window();
+    private FullScreen fullScreen = new FullScreen();
 
     //Create the context needed for opening/editing files.
     Context ctx = this;
@@ -40,7 +41,7 @@ public class SaveState extends AppCompatActivity {
 
     //Enumeration of button types for QOL.
     enum buttonType {
-        LOAD, SAVE, DELETE;
+        LOAD, SAVE, DELETE
     }
 
     /**
@@ -54,7 +55,9 @@ public class SaveState extends AppCompatActivity {
         //Sets the related XML document on the screen.
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.activity_save_state);
-        window.hideSystem(this);
+
+        this.fullScreen.hideSystem(this);
+        this.fullScreen.checkSystem(this);
 
         Button backBtn = findViewById(R.id.btnBack);
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -116,11 +119,11 @@ public class SaveState extends AppCompatActivity {
             public void onClick(View view) {
                 //Set the button's function depending on given button type.
                 if (_type.equals(buttonType.SAVE)) {
-                    save(saveObjects, _button);
+                    save(saveObjects, getFileName(_button));
                 } else if (_type.equals(buttonType.LOAD)) {
-                    load(_button);
+                    load(getFileName(_button));
                 } else if (_type.equals(buttonType.DELETE)) {
-                    delete(_button);
+                    delete(getFileName(_button));
                 }
             }
         });
@@ -159,17 +162,16 @@ public class SaveState extends AppCompatActivity {
      * Currently hold dummy data.
      *
      * @param _savedObjects
-     * @param _button
+     * @param _file
      */
-    public void save(LinkedList<String> _savedObjects, Button _button) {
+    public void save(LinkedList<String> _savedObjects, String _file) {
         //Put objects gotten from current game state in a linked list.
-        String fileName = getFileName(_button);
 
         _savedObjects.add("test");
         _savedObjects.add("");
 
         //Pass all to translator.
-        DBTranslator.updateObject(ctx, fileName, _savedObjects);
+        DBTranslator.updateObject(ctx, _file, _savedObjects);
 
         //Clear the linked list after use.
         _savedObjects.clear();
@@ -178,23 +180,19 @@ public class SaveState extends AppCompatActivity {
     /**
      * Method that overrides current game state with given save file.
      *
-     * @param _button
+     * @param _file
      */
-    public void load(Button _button) {
-        //Get information from button on which save slot is being loaded.
-        String fileName = getFileName(_button);
-
+    public void load(String _file) {
         //Pass all to translator.
-        saveObjects = DBTranslator.readObject(ctx, fileName);
+        saveObjects = DBTranslator.readObject(ctx, _file);
     }
 
     /**
      * Clears the file associated with the button pressed.
      *
-     * @param _button
+     * @param _file
      */
-    public void delete(Button _button) {
-        String fileName = getFileName(_button);
-        DBTranslator.deleteObject(ctx, fileName);
+    public void delete(String _file) {
+        DBTranslator.deleteObject(ctx, _file);
     }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ZombieSlayer</string>
+    <string name="app_name">Zombie Slayer</string>
     <string name="start_game">Start</string>
     <string name="load_game">Load</string>
     <string name="settings">Settings</string>
@@ -14,7 +14,6 @@
     <string name="weapons">Weapons</string>
     <string name="skins">Skins</string>
     <string name="misc">misc</string>
-    <string name="leaderboard">LeaderBoard</string>
     <string name="points">Points</string>
     <string name="health">Health</string>
     <string name="power">Power</string>
@@ -24,4 +23,17 @@
     <string name="back">Back</string>
     <string name="Load">Load</string>
     <string name="Save">Save</string>
+    <string name="SignOut">Sign Out</string>
+    <string name="Account">Account</string>
+    <string name="ChooseLanguage">Choose Language</string>
+    <string-array name="Languages">
+        <item>@string/ChooseLanguage</item>
+        <item>English</item>
+        <item>Español</item>
+        <item>عربى</item>
+        <item>русский</item>
+        <item>Français</item>
+    </string-array>
+
 </resources>
+

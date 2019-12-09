@@ -11,8 +11,6 @@ import android.content.Context;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.zombie.menu.Controller.GameLauncher;
-import com.zombie.menu.Views.MainMenu;
 
 import coreGame.View.Screens.PlayScreen;
 

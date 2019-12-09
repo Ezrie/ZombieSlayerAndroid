@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import coreGame.View.Screens.PlayScreen;
 
 public abstract class Enemy extends Sprite{
+    public final static float damageDeltaTime = 1f;
     protected World world;
     protected PlayScreen screen;
     public Body b2body;

@@ -16,7 +16,6 @@ public class Game extends AppCompatActivity {
 
     private RelativeLayout gameLayout;
     private Button analog;
-    private Window window = new Window();
 
     private float x;
     private float y;
@@ -47,7 +46,7 @@ public class Game extends AppCompatActivity {
             }
         });
 
-        window.hideSystem(this);
+
     }
 
 }
