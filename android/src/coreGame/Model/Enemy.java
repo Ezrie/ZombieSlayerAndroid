@@ -7,6 +7,7 @@ package coreGame.Model;
  * @author Francis Ynoa
  * Last Updated: 11/14/2019
  */
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
@@ -19,17 +20,19 @@ public abstract class Enemy extends Sprite{
     public Body b2body;
     public Enemy(PlayScreen _screen, float _x, float _y){
         this.world = _screen.getWorld();
-        this.screen = screen;
-        setPosition(_x,_y);
-        defineEnemy();
-        b2body.setActive(false);
+        this.screen = _screen;
     }
 
-    protected abstract void defineEnemy();
+    protected abstract void defineEnemy(float _x, float _y);
 
     public abstract void update(float _dt);
 
+    public void draw(Batch batch) {
+        super.draw(batch);
+    }
+
     public abstract void damageSurvivor();
 
+    public abstract void dispose();
 
 }

@@ -8,45 +8,44 @@ package coreGame.View.Screens;
  * Last Updated: 10/28/2019
  */
 
+import android.content.Context;
+
 import coreGame.Events.WorldContactListener;
 import coreGame.Model.Enemy;
 import coreGame.Model.Survivor;
-import coreGame.Model.Zombie;
 import coreGame.Util.GameConstants;
 import coreGame.Game.ZombieGame;
 import coreGame.Tools.B2WorldCreator;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
 import coreGame.View.Scenes.HUD;
 
 public class PlayScreen implements Screen {
+
     private final int VEL_ITERATIONS = 6;
     private final int POS_ITERATIONS = 2;
     private final float FPS = 1 / 60f;
-    private final int POS_MAX_SPEED = 1;
-    private final int NEG_MAX_SPEED = -1;
-    float speedX;
-    float speedY;
-    float DAMPING = 10f;
+
     //This creates Survivor.
     private Survivor player;
-
     //Declares a new game.
     private ZombieGame game;
     //Camera that follows the game.
@@ -69,7 +68,6 @@ public class PlayScreen implements Screen {
     private World world;
     //This renderer gives graphical representation of the bodies in the world.
     private Box2DDebugRenderer b2dr;
-
     private B2WorldCreator creator;
 
     /**
@@ -77,36 +75,37 @@ public class PlayScreen implements Screen {
      *
      * @param _game
      */
-    public PlayScreen(ZombieGame _game) {
-
+    public PlayScreen(ZombieGame _game, Context ctx) {
         //Loads sprite sheet image.
         spriteSheet = new Texture(Gdx.files.internal("spritesheet.png"));
         tiles = TextureRegion.split(spriteSheet,16,16);
         //Creates a new instance of the game.
         this.game = _game;
+        //New world with no gravity and allows sleeping bodies.
+        world = new World(new Vector2(0, 0), true);
+        player = new Survivor(this);
+
         gameCam = new OrthographicCamera();
-        gamePort = new FitViewport(GameConstants.V_WIDTH / GameConstants.PPM, GameConstants.V_HEIGHT / GameConstants.PPM, gameCam);
-        hud = new HUD(game.batch);
+        gamePort = new ExtendViewport(2f, 2f, gameCam);
+        //Camera starting position.
+        float initCameraX = gamePort.getWorldWidth() / 2;
+        float initCameraY = gamePort.getWorldHeight() / 2;
+        float initCameraZ = 0;
+        gameCam.position.set(initCameraX, initCameraY, initCameraZ);
+        //gameCam.setToOrtho(false, gamePort.getWorldWidth()/2, gamePort.getWorldHeight()/2);
+
+        //gamePort.setScreenSize(GameConstants.V_WIDTH, GameConstants.V_HEIGHT);
+        hud = new HUD(game.batch, ctx);
 
         //Loads in the map asset and renderer.
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("Mapv2.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1 / GameConstants.PPM);
 
-        //Camera starting position.
-        float initCameraX = gamePort.getWorldWidth() / 2;
-        float initCameraY = gamePort.getWorldHeight() / 2;
-        float initCameraZ = 0;
-        //Create the camera object.
-        gameCam.position.set(initCameraX, initCameraY, initCameraZ);
-
         //Creates a new Box2D world for physical movements.
-        world = new World(new Vector2(0, 0), true);
-        player = new Survivor(this);
+        Box2D.init();
         b2dr = new Box2DDebugRenderer();
         creator = new B2WorldCreator(this);
-        //Linear damping slows down the player movement if no keys are being pressed.
-        player.b2body.setLinearDamping(DAMPING);
 
         world.setContactListener(new WorldContactListener());
     }
@@ -122,54 +121,19 @@ public class PlayScreen implements Screen {
     }
 
     /**
-     * This moves the camera whenever the game screen is touched.
-     *
-     * @param _dt
-     */
-    public void handleInput(float _dt) {
-        speedX = player.b2body.getLinearVelocity().x;
-        speedY = player.b2body.getLinearVelocity().y;
-
-        // X and Y coordinates of the screen:
-        // (0,0)           (0,+)
-        //
-        //
-        //
-        //
-        // (-,0)           (-,+)
-
-        //On a button press, an impulse is applied to the player in a specific direction.
-        if (Gdx.input.isTouched() && (Gdx.input.getY() < player.getPositionY()) && speedY <= POS_MAX_SPEED) {
-            //if (Gdx.input.isKeyPressed(Input.Keys.UP) && speedY <= POS_MAX_SPEED)
-            player.b2body.applyLinearImpulse(new Vector2(0, -0.1f), player.b2body.getWorldCenter(), true);
-        }
-        if (Gdx.input.isTouched() && (Gdx.input.getX() > player.getPositionX()) && speedY <= POS_MAX_SPEED) {
-            //if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && speedX <= POS_MAX_SPEED)
-            player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
-        }
-        if (Gdx.input.isTouched() && (Gdx.input.getX() < player.getPositionX()) && speedY <= POS_MAX_SPEED) {
-            //if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && speedX >= NEG_MAX_SPEED)
-            player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
-        }
-        if (Gdx.input.isTouched() && (Gdx.input.getY() > player.getPositionY()) && speedY <= POS_MAX_SPEED) {
-            //if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && speedY >= NEG_MAX_SPEED)
-            player.b2body.applyLinearImpulse(new Vector2(0, 0.1f), player.b2body.getWorldCenter(), true);
-        }
-    }
-
-    /**
-     * This Updates the camera position continuously.
+     * This updates the camera position continuously. Called by render(float _dt).
      *
      * @param _dt is delta time.
      */
     public void update(float _dt) {
-        handleInput(_dt);
-        //This sets the fps of the game. Iterations are just for precision.
+
+        //This sets the fps of the game. Iterations are just for precision for the physics.
         world.step(FPS, VEL_ITERATIONS, POS_ITERATIONS);
+
         //This updates the HUD, specifically the timer countdown.
         hud.update(_dt);
-        //This updates the player position.
-        player.update(_dt);
+        //Pass it hud for now. Will make controller later
+        player.update(_dt, hud);
 
         for (Enemy enemy : creator.getZombies()) {
             enemy.update(_dt);
@@ -177,12 +141,14 @@ public class PlayScreen implements Screen {
                 enemy.b2body.setActive(true);
         }
         //This makes the game camera follow the player.
-        gameCam.position.x = player.b2body.getPosition().x;
-        gameCam.position.y = player.b2body.getPosition().y;
+        gameCam.position.x = player.getPositionX();
+        gameCam.position.y = player.getPositionY();
         gameCam.update();
         // This renders only what can be seen by the player -- the gameCam.
         renderer.setView(gameCam);
     }
+
+
 
     /**
      * Clears the map and re-renders each update.
@@ -197,22 +163,27 @@ public class PlayScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        renderer.render();
-
         //Renders the tiles as interactive objects; this shows the render lines.
         b2dr.render(world, gameCam.combined);
+
+        renderer.render();
+
         //This sets what we can see only in the game camera.
         game.batch.setProjectionMatrix(gameCam.combined);
         //This opens the "box" to put our textures for the game camera.
         game.batch.begin();
+
         //This draws the batch.
         player.draw(game.batch);
+
         for (Enemy enemy : creator.getZombies())
             enemy.draw(game.batch);
         //This stops putting textures for the game camera.
         game.batch.end();
+
         //This draws the what is in the HUD camera.
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+
         hud.stage.draw();
     }
 
@@ -257,6 +228,10 @@ public class PlayScreen implements Screen {
      */
     @Override
     public void dispose() {
+        player.dispose();
+        for (Enemy enemy : creator.getZombies()) {
+            enemy.dispose();
+        }
         map.dispose();
         renderer.dispose();
         world.dispose();

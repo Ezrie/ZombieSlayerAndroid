@@ -1,10 +1,11 @@
 package coreGame.Model;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -15,16 +16,24 @@ import coreGame.View.Screens.PlayScreen;
 
 public class Zombie extends Enemy {
     private float stateTime;
-    private TextureRegion zombieStand;
+    private TextureRegion zTexture;
+    private Sprite sprite;
     private boolean setToDestroy;
     private boolean isDestroyed;
     public Vector2 velocity;
+
     public Zombie(PlayScreen _screen, float _x, float _y) {
         super(_screen, _x, _y);
-        setBounds(getX(), getY(), 16 / GameConstants.PPM, 16 / GameConstants.PPM );
+        this.defineEnemy(_x, _y);
+
         TextureRegion zombieTexture = _screen.getTextures()[2][7];
-        zombieStand = new TextureRegion(zombieTexture);
-        setRegion(zombieStand);
+        zTexture = new TextureRegion(zombieTexture);
+        this.setRegion(zTexture);
+
+        sprite = new Sprite(zTexture);
+        sprite.setBounds(sprite.getX(), sprite.getY(), 16 / GameConstants.PPM, 16 / GameConstants.PPM );
+        //sprite.setPosition(getPositionX(), getPositionY());
+
         setToDestroy = false;
         isDestroyed = false;
         velocity = new Vector2(.2f ,0);
@@ -39,14 +48,14 @@ public class Zombie extends Enemy {
 
 
     @Override
-    protected void defineEnemy() {
+    protected void defineEnemy(float _x, float _y) {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(getX(),getY());
+        bdef.position.set(_x, _y);
         //Makes the zombie body dynamic; the survivor is affected by the physics in the box 2d world.
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
         // Continuous damage
-        b2body.setBullet(true);
+        //b2body.setBullet(true);
 
         //This creates the polygon shape/fixture of the survivor that will collide with objects.
         FixtureDef fdef = new FixtureDef();
@@ -66,10 +75,8 @@ public class Zombie extends Enemy {
         fdef.shape = shape;
         //The sensor makes the fixture to longer collide with anything in the box 2d world if set to true.
         fdef.isSensor = false;
+        b2body.setActive(false);
         b2body.createFixture(fdef).setUserData(this);
-
-
-
     }
 
     public void update(float _dt){
@@ -81,13 +88,19 @@ public class Zombie extends Enemy {
         }
         else if (!isDestroyed) {
             b2body.setLinearVelocity(velocity);
-            setPosition(getPositionX(), getPositionY());
+            sprite.setPosition(this.getPositionX(), this.getPositionY());
         }
     }
 
     public void draw(Batch batch){
-        if (!isDestroyed || stateTime < 1)
+        if (!isDestroyed || stateTime < 1) {
             super.draw(batch);
+            sprite.draw(batch);
+        }
+    }
+
+    public void dispose() {
+        sprite.getTexture().dispose();
     }
 
     @Override
@@ -99,10 +112,10 @@ public class Zombie extends Enemy {
 
     //==================================== Getters ==================================
     public float getPositionX(){
-        return b2body.getPosition().x - getWidth() / 2;
+        return b2body.getPosition().x - (sprite.getWidth() / 2f);
     }
 
     public float getPositionY(){
-        return b2body.getPosition().y - getHeight() / 2;
+        return b2body.getPosition().y - (sprite.getWidth() / 2f);
     }
 }
