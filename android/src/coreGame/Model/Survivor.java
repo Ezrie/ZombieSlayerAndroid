@@ -30,6 +30,7 @@ public class Survivor extends Sprite {
     public int healthPoints;
     private TextureRegion sTexture;
     private Sprite sprite;
+    private boolean spriteIsFlipped;
     public final Vector2 ZERO_VECTOR = new Vector2(0, 0);
     private Vector2 direction;
     private double hypotenuse;
@@ -48,6 +49,7 @@ public class Survivor extends Sprite {
 
         sprite = new Sprite(sTexture);
         sprite.setBounds(sprite.getX(), sprite.getY(), 16 / GameConstants.PPM, 16 / GameConstants.PPM);
+        spriteIsFlipped = false;
     }
 
     /**
@@ -105,6 +107,12 @@ public class Survivor extends Sprite {
     }
 
     public void draw(Batch batch) {
+        if (getVelocityX() < 0) {
+            spriteIsFlipped = true;
+        } else {
+            spriteIsFlipped = false;
+        }
+        sprite.setFlip(spriteIsFlipped, false);
         super.draw(batch);
         this.sprite.draw(batch);
     }

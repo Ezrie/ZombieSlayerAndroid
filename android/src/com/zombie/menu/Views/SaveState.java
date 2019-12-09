@@ -40,7 +40,7 @@ public class SaveState extends AppCompatActivity {
 
     //Enumeration of button types for QOL.
     enum buttonType {
-        LOAD, SAVE, DELETE;
+        LOAD, SAVE, DELETE
     }
 
     /**

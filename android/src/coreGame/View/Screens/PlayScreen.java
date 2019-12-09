@@ -43,11 +43,6 @@ public class PlayScreen implements Screen {
     private final int VEL_ITERATIONS = 6;
     private final int POS_ITERATIONS = 2;
     private final float FPS = 1 / 60f;
-    private final float ATTACK_DISTANCE = 1.5f;
-
-    private float xOffset;
-    private float yOffset;
-    private double hypotenuse;
 
     //This creates Survivor.
     public Survivor player;
@@ -143,13 +138,6 @@ public class PlayScreen implements Screen {
 
         for (Enemy enemy : creator.getZombies()) {
             enemy.update(_dt);
-            //Don't trigger enemies that are too far away.
-            xOffset = (enemy.b2body.getPosition().x) - (player.getPositionX());
-            yOffset = (enemy.b2body.getPosition().y) - (player.getPositionY());
-            hypotenuse = Math.sqrt((xOffset * xOffset) + (yOffset * yOffset));
-            if (hypotenuse > ATTACK_DISTANCE) {
-                enemy.b2body.setLinearVelocity(0, 0);
-            }
         }
         //This makes the game camera follow the player.
         gameCam.position.x = player.getPositionX();

@@ -21,14 +21,14 @@ public class Zombie extends Enemy {
     private float stateTime;
     private TextureRegion zTexture;
     private Sprite sprite;
+    private boolean spriteIsFlipped;
     private boolean setToDestroy;
     private boolean isDestroyed;
     private Survivor target;
 
-    private Vector2 position;
-    private Vector2 velocity;
     private Vector2 direction;
     private double hypotenuse;
+    private final float ATTACK_DISTANCE = 1.5f;
 
     public Zombie(PlayScreen _screen, float _x, float _y) {
         super(_screen, _x, _y);
@@ -40,22 +40,13 @@ public class Zombie extends Enemy {
 
         sprite = new Sprite(zTexture);
         sprite.setBounds(sprite.getX(), sprite.getY(), 16 / GameConstants.PPM, 16 / GameConstants.PPM );
-        //sprite.setPosition(getPositionX(), getPositionY());
+        spriteIsFlipped = false;
 
         setToDestroy = false;
         isDestroyed = false;
-        velocity = new Vector2(0,0);
         direction = new Vector2(0, 0);
         target = _screen.player;
     }
-
-    public void changeVelocity(boolean x, boolean y){
-        if (x)
-            velocity.x = -velocity.x;
-        if (y)
-            velocity.y = -velocity.y;
-    }
-
 
     @Override
     protected void defineEnemy(float _x, float _y) {
@@ -97,17 +88,31 @@ public class Zombie extends Enemy {
             stateTime = 0;
         }
         else if (!isDestroyed) {
-            updateZombiePosition();
+            if(isActive()) {
+                updateZombiePosition();
+            }
             sprite.setPosition(this.getPositionX(), this.getPositionY());
         }
     }
 
-    private void updateZombiePosition() {
+    private boolean isActive() {
+        //Don't trigger enemies that are too far away.
+        if (getDirectionHypotenuse() > ATTACK_DISTANCE) {
+            return false;
+        }
+        return true;
+    }
+
+    private float getDirectionHypotenuse() {
         direction.x = target.getPositionX() - this.getPositionX();
         direction.y = target.getPositionY() - this.getPositionY();
         hypotenuse = Math.sqrt((direction.x * direction.x) + (direction.y * direction.y));
-        direction.x = direction.x / (float) hypotenuse;
-        direction.y = direction.y / (float) hypotenuse;
+        return (float) hypotenuse;
+    }
+
+    private void updateZombiePosition() {
+        direction.x = direction.x / getDirectionHypotenuse();
+        direction.y = direction.y / getDirectionHypotenuse();
 
         if (this.getVelocityX() <= ZOMBIE_MAX_SPEED) {
             this.setVelocityX(direction.x * ZOMBIE_VELOCITY);
@@ -119,6 +124,12 @@ public class Zombie extends Enemy {
 
     public void draw(Batch batch){
         if (!isDestroyed || stateTime < 1) {
+            if (direction.x < 0) {
+                spriteIsFlipped = true;
+            } else {
+                spriteIsFlipped = false;
+            }
+            sprite.setFlip(spriteIsFlipped, false);
             super.draw(batch);
             sprite.draw(batch);
         }
@@ -149,7 +160,7 @@ public class Zombie extends Enemy {
     }
 
     public float getVelocityY() {
-        return this.b2body.getLinearVelocity().x;
+        return this.b2body.getLinearVelocity().y;
     }
 
     public float getPositionX(){
