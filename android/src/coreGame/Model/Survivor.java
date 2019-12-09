@@ -24,18 +24,22 @@ public class Survivor extends Sprite {
     public World world;
     public Body b2body;
     public Vector2 startPos = new Vector2(800 / GameConstants.PPM, 700 / GameConstants.PPM);
-    private final float MAX_SPEED = 1f;
+    private final float SPEED = 0.5f;
+    private final float MAX_SPEED = 2f;
     float DAMPING = 10f;
     public int healthPoints;
     private TextureRegion sTexture;
     private Sprite sprite;
     public final Vector2 ZERO_VECTOR = new Vector2(0, 0);
+    private Vector2 direction;
+    private double hypotenuse;
 
     public Survivor(PlayScreen _screen){
         this.world = _screen.getWorld();
 
         defineSurvivor();
         setHealthPoints(100);
+        direction = new Vector2(0, 0);
 
         TextureRegion tex = _screen.getTextures()[4][5];
         sTexture = new TextureRegion(tex);
@@ -83,11 +87,18 @@ public class Survivor extends Sprite {
         if (hud.handleJoystickInput().equals(ZERO_VECTOR)) {
             setVelocity(ZERO_VECTOR);
         } else {
+
+            direction.x = hud.handleJoystickInput().x;
+            direction.y = hud.handleJoystickInput().y;
+            hypotenuse = Math.sqrt((direction.x * direction.x) + (direction.y * direction.y));
+            direction.x = (direction.x / (float) hypotenuse) * SPEED;
+            direction.y = (direction.y / (float) hypotenuse) * SPEED;
+
             if (getVelocityX() <= MAX_SPEED) {
-                setVelocity(new Vector2(getVelocityX() + (hud.handleJoystickInput().x / 5), getVelocityY() ));
+                this.setVelocityX(direction.x);
             }
             if (getVelocityY() <= MAX_SPEED) {
-                setVelocity(new Vector2(getVelocityX(), getVelocityY() + (hud.handleJoystickInput().y / 5) ));
+                this.setVelocityY(direction.y);
             }
         }
         this.sprite.setPosition(this.getPositionX(), this.getPositionY());
@@ -132,5 +143,11 @@ public class Survivor extends Sprite {
         this.b2body.setLinearVelocity(_velocity);
     }
 
+    public void setVelocityX(float _x) {
+        this.b2body.setLinearVelocity(_x, this.b2body.getLinearVelocity().y);
+    }
 
+    public void setVelocityY(float _y) {
+        this.b2body.setLinearVelocity(this.b2body.getLinearVelocity().x, _y);
+    }
 }

@@ -2,11 +2,10 @@ buildscript {
 
 
     repositories {
+        google()
         mavenLocal()
         mavenCentral()
-        google()
-        maven { url "https://plugins.gradle.org/m2/" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+
         jcenter()
 
     }
@@ -30,21 +29,21 @@ allprojects {
     }
 
     repositories {
+        google()
         mavenLocal()
         mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
         jcenter()
-        google()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     }
 }
 
 project(":android") {
     apply plugin: "android"
-
+    apply plugin: 'com.android.application'
     configurations { natives }
 
     dependencies {
+        implementation 'com.google.android.gms:play-services-auth:17.0.0'
         api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
@@ -62,7 +61,7 @@ project(":android") {
 
     allprojects {
         tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:unchecked"
+            options.compilerArgs << "-Xlint:deprecation"
         }
     }
 }

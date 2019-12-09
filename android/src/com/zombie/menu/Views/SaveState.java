@@ -28,7 +28,7 @@ public class SaveState extends AppCompatActivity {
     //Used by save and load methods.
     LinkedList<String> saveObjects = new LinkedList<>();
 
-    private Window window = new Window();
+    private FullScreen fullScreen = new FullScreen();
 
     //Create the context needed for opening/editing files.
     Context ctx = this;
@@ -54,7 +54,9 @@ public class SaveState extends AppCompatActivity {
         //Sets the related XML document on the screen.
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.activity_save_state);
-        window.hideSystem(this);
+
+        this.fullScreen.hideSystem(this);
+        this.fullScreen.checkSystem(this);
 
         Button backBtn = findViewById(R.id.btnBack);
         backBtn.setOnClickListener(new View.OnClickListener() {
