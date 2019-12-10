@@ -30,6 +30,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -53,6 +54,8 @@ public class PlayScreen implements Screen {
     public Survivor player;
     //Creates an arrayList for bullets.
     ArrayList<Bullet> bullets;
+    ArrayList<Body> allBodies;
+    ArrayList<Body> toBeDeleted;
     private float curDelta;
     private final float cooldown = 1f;
 
@@ -95,11 +98,14 @@ public class PlayScreen implements Screen {
         //New world with no gravity and allows sleeping bodies.
         world = new World(new Vector2(0, 0), true);
         player = new Survivor(this);
-        bullets = new ArrayList<Bullet>();
+        bullets = new ArrayList<>();
+
+        allBodies = new ArrayList<>();
+        toBeDeleted = new ArrayList<>();
 
         gameCam = new OrthographicCamera();
         //Zoom level
-        gamePort = new ExtendViewport(1f, 1f, gameCam);
+        gamePort = new ExtendViewport(3f, 3f, gameCam);
         //Camera starting position.
         float initCameraX = gamePort.getWorldWidth() / 2;
         float initCameraY = gamePort.getWorldHeight() / 2;
@@ -160,21 +166,25 @@ public class PlayScreen implements Screen {
             bullets.add(new Bullet(this, player.getPositionX(), player.getPositionY(), player.getDirection(this.hud).x, player.getDirection(this.hud).y));
             curDelta = 0;
         }
-
+        /*
         for (Enemy enemy : creator.getZombies()) {
             enemy.update(_dt);
         }
+        */
 
         for (Bullet bullet : bullets){
             bullet.update(_dt);
         }
 
 
+        /*
+
         if(creator.getZombies().isEmpty()){
             Intent theEnd = new Intent(ctx, GameEnd.class);
             theEnd.putExtra("isWin", true);
             ctx.startActivity(theEnd);
         }
+        */
         //This makes the game camera follow the player.
         gameCam.position.x = player.getPositionX();
         gameCam.position.y = player.getPositionY();
@@ -202,6 +212,12 @@ public class PlayScreen implements Screen {
 
         renderer.render();
 
+        //Deletes the bodies which have been assigned to be destroyed by the contact listener.
+        for (Body body : toBeDeleted) {
+            world.destroyBody(body);
+        }
+        toBeDeleted.clear();
+
         //This sets what we can see only in the game camera.
         game.batch.setProjectionMatrix(gameCam.combined);
         //This opens the "box" to put our textures for the game camera.
@@ -213,9 +229,11 @@ public class PlayScreen implements Screen {
         for (Bullet bullet : bullets){
             bullet.draw(game.batch);
         }
-
+/*
         for (Enemy enemy : creator.getZombies())
             enemy.draw(game.batch);
+
+ */
         //This stops putting textures for the game camera.
         game.batch.end();
 
@@ -267,9 +285,12 @@ public class PlayScreen implements Screen {
     @Override
     public void dispose() {
         player.dispose();
+        /*
         for (Enemy enemy : creator.getZombies()) {
             enemy.dispose();
         }
+
+         */
         for (Bullet bullet : bullets){
             bullet.dispose();
         }
@@ -278,8 +299,12 @@ public class PlayScreen implements Screen {
         world.dispose();
         b2dr.dispose();
         hud.dispose();
-
     }
+
+    public void addToDestroyList(Body _body) {
+        toBeDeleted.add(_body);
+    }
+
     //=================== GETTERS =====================
 
     public TiledMap getMap(){

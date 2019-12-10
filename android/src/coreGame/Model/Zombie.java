@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -32,6 +33,7 @@ public class Zombie extends Enemy {
     private final int MAX_HEALTH = 20;
     private int curHealth;
 
+    private Body b2body;
     private Sprite sprite;
     private boolean spriteIsFlipped;
     private Survivor player;
@@ -127,7 +129,6 @@ public class Zombie extends Enemy {
      */
     @Override
     public void damageSurvivor() {
-        Gdx.app.log("Survivor-Zombie", "Collision");
         HUD.minusHealth(DAMAGE_AMOUNT);
     }
 

@@ -9,7 +9,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.World;
 
 import coreGame.Util.GameConstants;
 import coreGame.View.Scenes.HUD;
@@ -17,7 +16,8 @@ import coreGame.View.Screens.PlayScreen;
 
 public class Bullet extends Projectile {
 
-    public Body b2body;
+    private Body b2body;
+    private PlayScreen screen;
     float stateTime;
     private Sprite sprite;
     private Vector2 direction;
@@ -26,6 +26,7 @@ public class Bullet extends Projectile {
 
     public Bullet(PlayScreen _screen, float _x, float _y, float _dirX, float _dirY) {
         super(_screen, _x, _y, _dirX, _dirY);
+        this.screen = _screen;
         this.defineProjectile( _x, _y);
         direction = _screen.player.getDirection(_screen.hud);
         direction.x = direction.x * SPEED;
@@ -76,10 +77,9 @@ public class Bullet extends Projectile {
     public void update(float _dt){
         stateTime =+ _dt;
 
-        if(stateTime > 0.1) {
-            this.b2body.setLinearVelocity(0, 0);
-            this.dispose();
-            stateTime = 0;
+        //Automatically destroy the projectile if it doesn't hit after the specified time.
+        if(stateTime > 1) {
+            this.destroy();
         }
         else {
             sprite.setPosition(this.getPositionX(), this.getPositionY());
@@ -89,13 +89,11 @@ public class Bullet extends Projectile {
     public void damageSurvivor() {
         Gdx.app.log("Survivor-Projectile", "Collision");
         HUD.minusHealth(10);
-        this.dispose();
     }
 
     public void damageEnemy(Enemy enemy) {
         Gdx.app.log("Enemy-Projectile", "Collision");
         enemy.minusHealth(10);
-        this.dispose();
     }
 
     @Override
@@ -103,28 +101,16 @@ public class Bullet extends Projectile {
         sprite.draw(batch);
     }
 
+    public void destroy() {
+        this.screen.addToDestroyList(this.b2body);
+    }
+
     public void dispose(){
-        this.b2body.destroyFixture(b2body.getFixtureList().first());
         world.destroyBody(this.b2body);
         sprite.getTexture().dispose();
     }
 
-    public void setVelocityX(float _x) {
-        this.b2body.setLinearVelocity(_x, this.b2body.getLinearVelocity().y);
-    }
-
-    public void setVelocityY(float _y) {
-        this.b2body.setLinearVelocity(this.b2body.getLinearVelocity().x, _y);
-    }
-
-    //==================================== Getters ==================================
-    public float getVelocityX() {
-        return this.b2body.getLinearVelocity().x;
-    }
-
-    public float getVelocityY() {
-        return this.b2body.getLinearVelocity().y;
-    }
+    //==================================== Getters ==================================//
 
     public float getPositionX(){
         return b2body.getPosition().x - (sprite.getWidth() / 2f);

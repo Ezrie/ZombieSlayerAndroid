@@ -47,4 +47,6 @@ public abstract class Projectile extends Sprite {
     public abstract void damageSurvivor();
 
     public abstract void damageEnemy(Enemy enemy);
+
+    public abstract void destroy();
 }

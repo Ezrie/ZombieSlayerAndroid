@@ -13,10 +13,6 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
-import java.util.Date;
-import java.sql.Timestamp;
-import java.time.Instant;
-
 import coreGame.Model.Enemy;
 import coreGame.Model.InteractiveTileObject;
 import coreGame.Model.Projectile;
@@ -25,25 +21,18 @@ import coreGame.Util.GameConstants;
 
 public class WorldContactListener implements ContactListener {
     int count = 0;
-    Date startDate;
-    Timestamp startTime;
-    Date curDate;
-    Timestamp curTime;
+    Fixture object;
 
     /*
     This method identifies what fixtures are colliding when they do collide.
      */
     @Override
     public void beginContact(Contact _contact) {
-        startDate = new Date();
-        startTime = new Timestamp(startDate.getTime());
 
         Fixture fixA = _contact.getFixtureA();
         Fixture fixB = _contact.getFixtureB();
-        Fixture object;
 
         objectIdentifier(fixA, fixB);
-
     }
 
         /*if(fixA.getUserData() == "survivor" || fixB.getUserData() == "survivor"){
@@ -57,9 +46,7 @@ public class WorldContactListener implements ContactListener {
             }*/
 
     //This is a helper method for beginContact to identify what is being collided.
-    public void objectIdentifier(Fixture _fixA, Fixture _fixB){
-        curDate = new Date();
-        curTime = new Timestamp(curDate.getTime());
+    private void objectIdentifier(Fixture _fixA, Fixture _fixB){
 
         switch (_fixA.getFilterData().categoryBits) {
             case GameConstants.SURVIVOR_BIT:
@@ -72,7 +59,7 @@ public class WorldContactListener implements ContactListener {
                 break;
             case GameConstants.PROJECTILE_BIT:
                 count = 0;
-                objectIdentifierWithSurvivor(_fixB, _fixA);
+                objectIdentifierWithProjectile(_fixB, _fixA);
                 break;
             default:
                 {
@@ -91,39 +78,69 @@ public class WorldContactListener implements ContactListener {
         }
     }
 
-    public void objectIdentifierWithSurvivor(Fixture _fixture, Fixture _survivor){
-        Fixture object = _fixture;
+    private void objectIdentifierWithSurvivor(Fixture _fixture, Fixture _survivor){
+        object = _fixture;
         //This fires the event between survivor and a tile.
         if (object.getUserData() != null && InteractiveTileObject.class.isAssignableFrom(object.getUserData().getClass())) {
             ((InteractiveTileObject) object.getUserData()).survivorCollision();
+            Gdx.app.log("Survivor-Tile", "Collision");
         }
+        /*
         //This fires the event between survivor and a projectile.
         else if (object.getUserData() != null && Projectile.class.isAssignableFrom(object.getUserData().getClass())) {
             //((InteractiveTileObject) object.getUserData()).survivorCollision();
             ((Projectile) object.getUserData()).damageSurvivor();
         }
+         */
         //This fires the event between survivor and an enemy.
         else if (object.getUserData() != null && Enemy.class.isAssignableFrom(object.getUserData().getClass())) {
-            //if ((curTime.getTime() - startTime.getTime()) > Enemy.damageDeltaTime) {
                 ((Enemy) object.getUserData()).damageSurvivor();
-                //curTime = new Timestamp(curDate.getTime());
-            //}
+                Gdx.app.log("Survivor-Enemy", "Collision");
         }
     }
 
-    public void objectIdentifierWithZombie(Fixture _fixture, Fixture _Zombie){
-        Fixture object = _fixture;
+    private void objectIdentifierWithZombie(Fixture _fixture, Fixture _Zombie){
+        object = _fixture;
         //This fires the event between a zombie and a tile.
         if (object.getUserData() != null && InteractiveTileObject.class.isAssignableFrom(object.getUserData().getClass())) {
             ((InteractiveTileObject) object.getUserData()).zombieHit();
+            Gdx.app.log("Zombie-Tile", "Collision");
         }
         //This fires the event between a zombie and a survivor.
         else if (object.getUserData() != null && Survivor.class.isAssignableFrom(object.getUserData().getClass())) {
             ((Enemy) _Zombie.getUserData()).damageSurvivor();
+            Gdx.app.log("Zombie-Survivor", "Collision");
         }
         //This fires the event between a zombie and a projectile.
         else if (object.getUserData() != null && Projectile.class.isAssignableFrom(object.getUserData().getClass())) {
             ((Projectile) object.getUserData()).damageEnemy((Enemy) _Zombie.getUserData());
+            ((Projectile) _fixture.getUserData()).destroy();
+            Gdx.app.log("Zombie-Projectile", "Collision");
+        }
+    }
+
+    private void objectIdentifierWithProjectile(Fixture _fixture, Fixture _Projectile) {
+        object = _fixture;
+        //This fires the event between a projectile and a tile.
+        if (object.getUserData() != null && InteractiveTileObject.class.isAssignableFrom(object.getUserData().getClass())) {
+            //Set projectile to be destroyed.
+            ((Projectile) _Projectile.getUserData()).destroy();
+            Gdx.app.log("Projectile-Tile", "Collision");
+        }
+        /*
+        //This fires the event between a projectile and a survivor.
+        else if (object.getUserData() != null && Survivor.class.isAssignableFrom(object.getUserData().getClass())) {
+            //Deal damage and set projectile to be destroyed.
+            ((Survivor)object.getUserData()).minusHealthPoints((5);
+            ((Projectile) _Projectile.getUserData()).destroy();
+        }
+         */
+        //This fires the event between a projectile and a zombie.
+        else if (object.getUserData() != null && Enemy.class.isAssignableFrom(object.getUserData().getClass())) {
+            //Deal damage and set projectile to be destroyed.
+            ((Projectile) _Projectile.getUserData()).damageEnemy((Enemy)_fixture.getUserData());
+            ((Projectile) _Projectile.getUserData()).destroy();
+            Gdx.app.log("Projectile-Zombie", "Collision");
         }
     }
 

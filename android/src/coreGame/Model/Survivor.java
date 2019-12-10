@@ -19,37 +19,46 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.World;
 
 public class Survivor extends Sprite {
 
-    private World world;
-    private Body b2body;
-    private Vector2 startPos = new Vector2(800 / GameConstants.PPM, 700 / GameConstants.PPM);
+    private PlayScreen screen;
+
+    private final float START_X_POS = 800 / GameConstants.PPM;
+    private final float START_Y_POS = 700 / GameConstants.PPM;
     private final float SPEED = 0.5f;
     private final float MAX_SPEED = 2f;
-    float DAMPING = 10f;
-    private int healthPoints;
+    private float DAMPING = 10f;
+
+    private int healthPointsMax = 100;
+    private int curHealthPoints;
     private TextureRegion sTexture;
     private Sprite sprite;
     private boolean spriteIsFlipped;
-    public final Vector2 ZERO_VECTOR = new Vector2(0, 0);
-    public Vector2 direction;
+
+    private Body b2body;
+    private Vector2 direction;
     private double hypotenuse;
 
-    public Survivor(PlayScreen _screen){
-        this.world = _screen.getWorld();
-
+    /**
+     * This constructor creates a Box2D object and a Sprite for the user's character.
+     *
+     * @param _screen is where the player exists in.
+     */
+    public Survivor(PlayScreen _screen) {
+        this.screen = _screen;
+        //Creates the Box2D body for the player.
         defineSurvivor();
-        setHealthPoints(100);
-        direction = new Vector2(0, 0);
+        this.curHealthPoints = healthPointsMax;
+        this.direction = Vector2.Zero;
 
         //The texture used for the survivor is at [4][5] from the sprite images (spritesheet.png)
         TextureRegion tex = _screen.getTextures()[4][5];
         sTexture = new TextureRegion(tex);
-        //Sets textures to the coordinates defined by the sprite batch (from getTextures[coords]).
+        //Sets textures to the coordinates defined by the sprite batch (from getTextures[4][5]).
         this.setRegion(sTexture);
 
+        //Initialize the sprite object and overlay it on the b2body.
         sprite = new Sprite(sTexture);
         sprite.setBounds(sprite.getX(), sprite.getY(), 16 / GameConstants.PPM, 16 / GameConstants.PPM);
         spriteIsFlipped = false;
@@ -58,12 +67,12 @@ public class Survivor extends Sprite {
     /**
      * Defines Survivor with shape and starting position.
      */
-    protected void defineSurvivor(){
+    private void defineSurvivor() {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(startPos);
+        bdef.position.set(new Vector2(START_X_POS, START_Y_POS));
         //Makes the survivor body dynamic; the survivor is affected by the physics in the box 2d world.
         bdef.type = BodyDef.BodyType.DynamicBody;
-        b2body = world.createBody(bdef);
+        b2body = screen.getWorld().createBody(bdef);
         //Linear damping slows down the player movement if no keys are being pressed.
         b2body.setLinearDamping(DAMPING);
 
@@ -84,17 +93,20 @@ public class Survivor extends Sprite {
         fdef.shape = shape;
         //The sensor makes the fixture to longer collide with anything in the box 2d world if set to true.
         fdef.isSensor = false;
-        b2body.createFixture(fdef).setUserData("survivor");
+        b2body.createFixture(fdef).setUserData(this);
     }
 
-    public void update(float _dt, HUD hud) {
-        if (hud.joystick.handleJoystickInput(hud).isZero()) {
-            setVelocity(ZERO_VECTOR);
+    /**
+     * This method updates the survivor's b2body position and sprite position.
+     *
+     * @param _dt is the time passed since the last update call.
+     * @param _hud is the HUD which carries the joystick object.
+     */
+    public void update(float _dt, HUD _hud) {
+        if (_hud.joystick.handleJoystickInput(_hud).equals(Vector2.Zero)) {
+            setVelocity(Vector2.Zero);
         } else {
-
-            direction.x = hud.joystick.handleJoystickInput(hud).x;
-            direction.y = hud.joystick.handleJoystickInput(hud).y;
-            hypotenuse = Math.sqrt((direction.x * direction.x) + (direction.y * direction.y));
+            direction = getDirection(_hud);
             direction.x = (direction.x / (float) hypotenuse) * SPEED;
             direction.y = (direction.y / (float) hypotenuse) * SPEED;
 
@@ -108,6 +120,11 @@ public class Survivor extends Sprite {
         this.sprite.setPosition(this.getPositionX(), this.getPositionY());
     }
 
+    /**
+     * This method draws the survivor's sprite onto the screen.
+     *
+     * @param batch is the collection of sprite textures used for the entire game.
+     */
     public void draw(Batch batch) {
         if (getVelocityX() < 0) {
             spriteIsFlipped = true;
@@ -134,7 +151,7 @@ public class Survivor extends Sprite {
     }
 
     public int getHealthPoints() {
-        return healthPoints;
+        return curHealthPoints;
     }
 
     public float getVelocityX() {
@@ -157,8 +174,12 @@ public class Survivor extends Sprite {
 
     //=================================== Setters =====================================//
 
+    public void minusHealthPoints(int _amount) {
+        this.curHealthPoints -= _amount;
+    }
+
     public void setHealthPoints(int _healthPoints) {
-        this.healthPoints = _healthPoints;
+        this.curHealthPoints = _healthPoints;
     }
 
     public void setVelocity(Vector2 _velocity) {
