@@ -1,10 +1,11 @@
 package coreGame.Model;
 /**
- * This class creates the Survivor object.
+ * This class creates the Survivor object which is directly controlled by the user.
+ *
  * @author Ezrie Brant
  * @author David Chan
  * @author Francis Ynoa
- * Last Updated: 11/14/2019
+ * Last Updated: 12/10/2019
  */
 import coreGame.Util.GameConstants;
 import coreGame.View.Scenes.HUD;
@@ -35,18 +36,25 @@ public class Survivor extends Sprite {
     public Vector2 direction;
     private double hypotenuse;
 
-    public Survivor(PlayScreen _screen){
+    /**
+     * This constructor creates a Box2D object and a Sprite for the user's character.
+     *
+     * @param _screen is where the player exists in.
+     */
+    public Survivor(PlayScreen _screen) {
         this.world = _screen.getWorld();
-
+        //Creates the Box2D body for the player.
         defineSurvivor();
         setHealthPoints(100);
         direction = new Vector2(0, 0);
 
+        //The texture used for the survivor is at [4][5] from the sprite images (spritesheet.png)
         TextureRegion tex = _screen.getTextures()[4][5];
         sTexture = new TextureRegion(tex);
-        //Sets textures to the coordinates defined by the sprite batch (from getTextures[coords]).
+        //Sets textures to the coordinates defined by the sprite batch (from getTextures[4][5]).
         this.setRegion(sTexture);
 
+        //Initialize the sprite object and overlay it on the b2body.
         sprite = new Sprite(sTexture);
         sprite.setBounds(sprite.getX(), sprite.getY(), 16 / GameConstants.PPM, 16 / GameConstants.PPM);
         spriteIsFlipped = false;
@@ -55,7 +63,7 @@ public class Survivor extends Sprite {
     /**
      * Defines Survivor with shape and starting position.
      */
-    public void defineSurvivor(){
+    private void defineSurvivor() {
         BodyDef bdef = new BodyDef();
         bdef.position.set(startPos);
         //Makes the survivor body dynamic; the survivor is affected by the physics in the box 2d world.
@@ -86,13 +94,19 @@ public class Survivor extends Sprite {
         b2body.createFixture(fdef).setUserData("survivor");
     }
 
-    public void update(float _dt, HUD hud) {
-        if (hud.handleJoystickInput().equals(ZERO_VECTOR)) {
-            setVelocity(ZERO_VECTOR);
+    /**
+     * This method updates the survivor's b2body position and sprite position.
+     *
+     * @param _dt is the time passed since the last update call.
+     * @param _hud is the HUD which carries the joystick object.
+     */
+    public void update(float _dt, HUD _hud) {
+        if (_hud.handleJoystickInput().equals(Vector2.Zero)) {
+            setVelocity(Vector2.Zero);
         } else {
 
-            direction.x = hud.handleJoystickInput().x;
-            direction.y = hud.handleJoystickInput().y;
+            direction.x = _hud.handleJoystickInput().x;
+            direction.y = _hud.handleJoystickInput().y;
             hypotenuse = Math.sqrt((direction.x * direction.x) + (direction.y * direction.y));
             direction.x = (direction.x / (float) hypotenuse) * SPEED;
             direction.y = (direction.y / (float) hypotenuse) * SPEED;
@@ -107,17 +121,26 @@ public class Survivor extends Sprite {
         this.sprite.setPosition(this.getPositionX(), this.getPositionY());
     }
 
+    /**
+     * This method draws the survivor's sprite onto the screen.
+     *
+     * @param batch is the collection of sprite textures used for the entire game.
+     */
     public void draw(Batch batch) {
         if (getVelocityX() < 0) {
-            spriteIsFlipped = true;
+            this.spriteIsFlipped = true;
         } else {
-            spriteIsFlipped = false;
+            this.spriteIsFlipped = false;
         }
         sprite.setFlip(spriteIsFlipped, false);
         super.draw(batch);
         this.sprite.draw(batch);
     }
 
+    /**
+     * This method throws away the texture of the sprite when it's done being used to prevent
+     * memory leaks.
+     */
     public void dispose() {
         sprite.getTexture().dispose();
     }
@@ -143,7 +166,22 @@ public class Survivor extends Sprite {
         return b2body.getLinearVelocity().y;
     }
 
-    //=================================== Setters =====================================
+    public Vector2 getDirection(HUD hud) {
+        float dirX = hud.handleJoystickInput().x;
+        float dirY = hud.handleJoystickInput().y;
+        float hyp = (float) Math.sqrt((dirX * dirX) + (dirY * dirY));
+        dirX = (dirX / hyp);
+        dirY = (dirY / hyp);
+
+        return new Vector2(dirX, dirY);
+    }
+
+    //=================================== Setters =====================================//
+
+    public void minusHealthPoints(int _amount) {
+        this.healthPoints -= _amount;
+    }
+
     public void setHealthPoints(int _healthPoints) {
         this.healthPoints = _healthPoints;
     }

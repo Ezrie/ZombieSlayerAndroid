@@ -1,4 +1,8 @@
 package coreGame.Model;
+/**
+ * This class defines a type of Projectile and creates, updates, and renders the object given a
+ * screen where they will be contained.
+ */
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -14,20 +18,35 @@ import coreGame.Util.GameConstants;
 import coreGame.View.Screens.PlayScreen;
 
 public class Bullet extends Projectile {
+
+    //The necessary variables that are used for Box2D creation and updating.
     protected World world;
     protected PlayScreen screen;
-    public Body b2body;
-    boolean fireWeapon;
-    boolean setToDestroy; //remove
-    boolean isDestroyed;
-    float stateTime;
-    float x, y;
+    private Body b2body;
+    private int radius;
+    private float speed = 2f;
     private Sprite sprite;
-    private Vector2 velocity;
-    //===
-    public static final int SPEED = 500;
     private static Texture texture;
+    private Vector2 velocity;
 
+    //Says if the button to fire the weapon, located in the HUD, is pressed or not.
+    boolean fireWeapon;
+    //Marks the object to be removed from rendering and updating. Destroys the Box2D body.
+    boolean setToDestroy;
+    //Says if the bullet has been destroyed already or not.
+    boolean isDestroyed;
+    //The time since the object has been created in the screen.
+    float stateTime;
+
+    /**
+     * Constructor that initializes the bullet object's world, construction of the Box2D body, and
+     * sets the sprite.
+     *
+     * @param _screen is the screen where the bullet has been called from.
+     * @param _x is the X starting position.
+     * @param _y is the Y starting position.
+     * @param _fireWeapon is the boolean that says if the weapon the Survivor has is being fired.
+     */
     public Bullet(PlayScreen _screen, float _x, float _y, boolean _fireWeapon) {
         super(_screen, _x, _y, _fireWeapon);
         this.world = _screen.getWorld();
@@ -35,34 +54,34 @@ public class Bullet extends Projectile {
         this.fireWeapon = _fireWeapon;
         this.defineProjectile( _x, _y);
 
-        //if (texture == null)
+        //Constructs the sprite.
         texture = new Texture("touchpad-knob.png");
         sprite = new Sprite(texture);
         sprite.setBounds(sprite.getX(), sprite.getY(), 6 / GameConstants.PPM, 6 / GameConstants.PPM);
         sprite.setPosition(_x,_y);
 
+        //Initialize as not set to be destroyed, and has not been destroyed.
         setToDestroy = false;
         isDestroyed = false;
     }
 
-
-
     /**
-     * This method creates the projectile's body and its fixtures.
+     * This method creates the projectile's body and its fixture in Box2D.
      */
     @Override
     public void defineProjectile(float _x, float _y){
         BodyDef bdef = new BodyDef();
         bdef.position.set(_x, _y);
-        //The projectile is affected by the physics of the b2world.
+        //The projectile is dynamic and is affected by the physics of the B2World.
         bdef.type = BodyDef.BodyType.DynamicBody;
         //This checks if we are in a middle of a time step (60 per second).
         if(!world.isLocked())
             b2body = world.createBody(bdef);
-
         FixtureDef fdef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(3 / GameConstants.PPM);
+        shape.setRadius(radius / GameConstants.PPM);
+
+        //Filters what type of other objects the bullet object can collide with.
         fdef.filter.categoryBits = GameConstants.PROJECTILE_BIT;
         fdef.filter.maskBits = GameConstants.DEFAULT_BIT |
                 GameConstants.COIN_BIT |
@@ -72,21 +91,25 @@ public class Bullet extends Projectile {
                 GameConstants.OBJECT_BIT;
 
         fdef.shape = shape;
-        //fdef.restitution = 1;
+        //Don't allow the bullet to have friction.
         fdef.friction = 0;
         b2body.createFixture(fdef).setUserData(this);
-        //b2body.setLinearVelocity(new Vector2(fireWeapon ? 2 : -2, 2.5f));
 
     }
     /**
-     * This method updates the position of the bullet, but also destroys the body if it is
-     * set to be destroyed--bullet colliding with an object.
-     * @param _dt
+     * This method updates the position of the bullet.
+     *
+     * @param _dt is the time since the last update was called.
      */
     public void update(float _dt){
+        //Updates the time since the bullet has been created.
         stateTime =+ _dt;
-        velocity = new Vector2(2f ,0);
-        //
+        //For now, only have the bullet to to the right.
+        velocity = new Vector2(speed ,0);
+        /*
+        Update the Body's position only if the bullet is still alive. The bullet will die if it
+        lives past the defined time it's allowed or if another method sets it to be destroyed.
+         */
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
         if((stateTime > 3 || setToDestroy) && !isDestroyed) {
             world.destroyBody(b2body);
@@ -96,46 +119,37 @@ public class Bullet extends Projectile {
             b2body.setLinearVelocity(velocity);
             sprite.setPosition(this.getPositionX(), this.getPositionY());
         }
-        //This keeps the velocity in vertical direction capped at 2. Use this when the joystick is done.
-        //if(b2body.getLinearVelocity().y > 2f)
-        // b2body.setLinearVelocity(b2body.getLinearVelocity().x, 2f);
-        //if((fireWeapon && b2body.getLinearVelocity().x < 0) || (!fireWeapon && b2body.getLinearVelocity().x > 0))
-        //  setToDestroy();
-
-
-
     }
 
+    /**
+     * This method marks the bullet to be destroyed from the screen, and for the Box2D body to be
+     * disposed of.
+     */
     public void setToDestroy(){
         this.setToDestroy = true;
     }
 
+    /**
+     * Checks if the bullet has been destroyed.
+     *
+     * @return boolean that's true if the bullet has been destroyed.
+     */
     public boolean isDestroyed(){
         return this.isDestroyed;
     }
 
+    /**
+     * Draws the bullet's sprite.
+     *
+     * @param batch is the collection of sprites shared by the entire game.
+     */
     @Override
     public void draw(Batch batch){
         if (!isDestroyed)
             sprite.draw(batch);
     }
 
-    public void setVelocityX(float _x) {
-        this.b2body.setLinearVelocity(_x, this.b2body.getLinearVelocity().y);
-    }
-
-    public void setVelocityY(float _y) {
-        this.b2body.setLinearVelocity(this.b2body.getLinearVelocity().x, _y);
-    }
-
-    //==================================== Getters ==================================
-    public float getVelocityX() {
-        return this.b2body.getLinearVelocity().x;
-    }
-
-    public float getVelocityY() {
-        return this.b2body.getLinearVelocity().y;
-    }
+    //==================================== Getters ==================================//
 
     public float getPositionX(){
         return b2body.getPosition().x - (sprite.getWidth() / 2f);
@@ -143,5 +157,9 @@ public class Bullet extends Projectile {
 
     public float getPositionY(){
         return b2body.getPosition().y - (sprite.getWidth() / 2f);
+    }
+
+    public Body getBody() {
+        return this.b2body;
     }
 }

@@ -1,11 +1,11 @@
 package coreGame.View.Scenes;
 /**
- * This is the class which creates and displays the HUD for the main game.
+ * This is the class which creates and displays the HUD, the joystick, and the button.
  *
  * @author Ezrie Brant
  * @author David Chan
  * @author Francis Ynoa
- * Last Updated: 10/29/2019
+ * Last Updated: 12/10/2019
  */
 
 import android.content.Context;
@@ -33,17 +33,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.Locale;
 
-/*
-
-Wireframe
-System Architecture
-
-*/
-
 public class HUD extends SurfaceView implements Disposable {
 
     //Creates a new stage and viewport where the HUD will be in.
-    public Stage stage;
+    private Stage stage;
     private Viewport viewport;
 
     //Joystick that will be used for movement.
@@ -52,17 +45,25 @@ public class HUD extends SurfaceView implements Disposable {
     private Skin joystickSkin;
     private Drawable joystickBackground;
     private Drawable joystickKnob;
+    private int joystickRadius;
+    private int joystickXpos = 8;
+    private int joystickYpos = 8;
+    private int joystickWidth = 64;
+    private int joystickHeight = 64;
 
     //Button that will be used for firing projectiles.
-    public static Button button;
-    public  Button.ButtonStyle buttonStyle;
-    public  Skin buttonSkin;
-    public  Drawable buttonReleased;
-    public  Drawable buttonPressed;
+    private static Button button;
+    private Button.ButtonStyle buttonStyle;
+    private Skin buttonSkin;
+    private Drawable buttonReleased;
+    private Drawable buttonPressed;
+    private int buttonXpos = 350;
+    private int buttonYpos = 16;
+    private int buttonWidth = 40;
+    private int buttonHeight = 40;
 
     //HUD literals.
-    private Integer worldTimer = 300;
-    //This will be used later.
+    private Integer worldTimer = 100;
     private float timeCount = 0;
     private static Integer scoreCount = 0;
     private String nameLabel = "Survivor";
@@ -116,8 +117,8 @@ public class HUD extends SurfaceView implements Disposable {
         joystickStyle.background = joystickBackground;
         joystickStyle.knob = joystickKnob;
 
-        joystick = new Touchpad(10, joystickStyle);
-        joystick.setBounds(8, 8, 64, 64);
+        joystick = new Touchpad(joystickRadius, joystickStyle);
+        joystick.setBounds(joystickXpos, joystickYpos, joystickWidth, joystickHeight);
 
         //Button for firing projectiles.
         buttonSkin = new Skin();
@@ -132,7 +133,7 @@ public class HUD extends SurfaceView implements Disposable {
         buttonPressed = buttonSkin.getDrawable("buttonPressed");
 
         button = new Button(buttonReleased, buttonPressed);
-        button.setBounds(350, 16, 40, 40);
+        button.setBounds(buttonXpos, buttonYpos, buttonWidth, buttonHeight);
 
         //Creates a table at the top of the game's window.
         Table table = new Table();
@@ -154,6 +155,12 @@ public class HUD extends SurfaceView implements Disposable {
         stage.addActor(joystick);
         stage.addActor(button);
     }
+
+    /**
+     * Updates the HUD counter.
+     *
+     * @param _dt is the time since the last update method.
+     */
     public void update(float _dt){
         timeCount += _dt;
         if (timeCount >= 1){
@@ -163,30 +170,58 @@ public class HUD extends SurfaceView implements Disposable {
         }
     }
 
+    /**
+     * Determines if the button for firing projectiles is currently being pressed.
+     *
+     * @return boolean if the weapon fire button is pressed.
+     */
     public static boolean isButtonPressed() {
         return button.isPressed();
     }
 
+    /**
+     * Method that handles the joystick input.
+     *
+     * @return a Vector2 of the direction the joystick is pointing to.
+     */
     public Vector2 handleJoystickInput() {
         if(joystick.getKnobPercentX() == 0 && joystick.getKnobPercentY() == 0) {
-            return new Vector2(0, 0);
+            return Vector2.Zero;
         } else {
             return new Vector2(joystick.getKnobPercentX(), joystick.getKnobPercentY());
         }
     }
 
+    /**
+     * Subtracts the given value from the current health.
+     *
+     * @param _value is the amount the health should be reduced by.
+     */
     public static void changeHealth(int _value){
         healthLabel -= _value;
         healthHUD.setText(String.format(Locale.getDefault(),"%03d", healthLabel));
     }
 
+    /**
+     * Adds to the score.
+     *
+     * @param _value is an integer that's added to the score.
+     */
     public static void addScore(int _value){
         scoreCount += _value;
         scoreHUD.setText(String.format(Locale.getDefault(),"%06d", scoreCount));
     }
 
+    /**
+     * Disposes of any resources used within the stage to prevent memory leaks.
+     */
     @Override
     public void dispose() {
         stage.dispose();
     }
+
+    //=================== GETTERS =====================
+
+    public Stage getStage() { return this.stage; }
+    public Touchpad getJoystick() { return this.joystick; }
 }

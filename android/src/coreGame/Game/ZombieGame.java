@@ -16,12 +16,16 @@ import coreGame.View.Screens.PlayScreen;
 
 public class ZombieGame extends Game {
 
+    //Context is needed to pass non-static information between activities.
     private Context ctx;
-
     //Declaring the graphics of the game. Used by all other classes and is memory heavy.
     public SpriteBatch batch;
 
-
+    /**
+     * Initializes a new game to be created.
+     *
+     * @param _ctx is the context of the application instance.
+     */
     public ZombieGame(Context _ctx) {
         this.ctx = _ctx;
     }
@@ -43,7 +47,7 @@ public class ZombieGame extends Game {
     }
 
     /**
-     * Manually dispose of game's assets after game exits. Reduces memory usage.
+     * Manually dispose of game's assets after game exits. Prevents memory leaks.
      */
     @Override
     public void dispose () {

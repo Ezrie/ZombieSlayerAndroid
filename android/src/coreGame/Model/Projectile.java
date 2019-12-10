@@ -1,22 +1,14 @@
 package coreGame.Model;
 /**
- * This class creates the body and fixture for a bullet, but also includes the logic
- * dealing with any bullet collision.
+ * This abstract class defines the functions every subclass of a Projectile needs, like Bullet.
  *
  * @author Ezrie Brant
  * @author David Chan
  * @author Francis Ynoa
- * Last Updated: 11/28/2019
+ * Last Updated: 12/10/2019
  */
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-
-import coreGame.Util.GameConstants;
 import coreGame.View.Screens.PlayScreen;
 
 public abstract class Projectile extends Sprite {
@@ -24,12 +16,18 @@ public abstract class Projectile extends Sprite {
     protected PlayScreen screen;
     boolean fireWeapon;
 
-
-    public Projectile(PlayScreen _screen, float _x, float _y, boolean fireWeapon){
+    /**
+     * This constructor defines the space the Projectile will be created in.
+     *
+     * @param _screen is the PlayScreen which creates the Projectile.
+     * @param _x is the X starting position.
+     * @param _y is the Y starting position.
+     * @param _fireWeapon is weather or not the weapon is set to fire.
+     */
+    public Projectile(PlayScreen _screen, float _x, float _y, boolean _fireWeapon){
         this.world = _screen.getWorld();
         this.screen = _screen;
-        this.fireWeapon = fireWeapon;
-
+        this.fireWeapon = _fireWeapon;
     }
 
     /**
@@ -40,12 +38,20 @@ public abstract class Projectile extends Sprite {
     /**
      * This method updates the position of the bullet, but also destroys the body if it is
      * set to be destroyed--bullet colliding with an object.
-     * @param _dt
+     *
+     * @param _dt is the time difference since the last update was called.
      */
     public abstract void update(float _dt);
 
+    /**
+     * This method sets the Projectile object to be marked as destroyed.
+     */
     public abstract void setToDestroy();
 
-
+    /**
+     * This method checks if the Projectile object is destroyed or not.
+     *
+     * @return boolean true if destroyed, otherwise false.
+     */
     public abstract boolean isDestroyed();
 }

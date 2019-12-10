@@ -47,7 +47,7 @@ public class Zombie extends Enemy {
         isDestroyed = false;
         direction = new Vector2(0, 0);
         directionForHyp = new Vector2(0, 0);
-        target = _screen.player;
+        target = _screen.getSurvivor();
     }
 
     @Override

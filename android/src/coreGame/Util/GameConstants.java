@@ -19,6 +19,9 @@ public class GameConstants {
     //Because box2D uses measurements in meters, we have to scale pixels to meters.
     public static final float PPM = 100;
 
+    //This is the size of all the pixel sprites and tile objects that were downloaded as resources.
+    public static final int PIXEL_SIZE = 16;
+
     /*
     Each fixture has a filter. The two parts of a filter is category and mask.
     The "category" looks at what fixture is being used, and a "mask" looks at what the fixture

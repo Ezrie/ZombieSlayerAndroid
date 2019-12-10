@@ -1,11 +1,11 @@
 package coreGame.View.Screens;
 /**
- * This class updates and renders the game's world/map and the camera.
+ * This class updates and renders the game's map, camera, and entities.
  *
  * @author Ezrie Brant
  * @author David Chan
  * @author Francis Ynoa
- * Last Updated: 10/28/2019
+ * Last Updated: 12/10/2019
  */
 
 import android.content.Context;
@@ -48,13 +48,15 @@ public class PlayScreen implements Screen {
     private final float FPS = 1 / 60f;
 
     //This creates Survivor.
-    public Survivor player;
+    private Survivor player;
     //Declares a new game.
     private ZombieGame game;
     //Creates an arrayList for bullets.
     ArrayList<Bullet> bullets;
     //Camera that follows the game.
     private OrthographicCamera gameCam;
+    //Zoom level of the camera.
+    private float zoom = 1f;
     //The viewport determines the aspect ratio for different devices.
     private Viewport gamePort;
     //HUD displays the informational text across the top of the screen.
@@ -79,23 +81,24 @@ public class PlayScreen implements Screen {
     /**
      * The game's "world" where the camera, screen, map, and objects are created and rendered.
      *
-     * @param _game
+     * @param _game is the ZombieGame object.
+     * @param _ctx is the context for this activity.
      */
-    public PlayScreen(ZombieGame _game, Context ctx) {
+    public PlayScreen(ZombieGame _game, Context _ctx) {
         //Loads sprite sheet image.
         spriteSheet = new Texture(Gdx.files.internal("spritesheet.png"));
-        tiles = TextureRegion.split(spriteSheet,16,16);
+        tiles = TextureRegion.split(spriteSheet,GameConstants.PIXEL_SIZE,GameConstants.PIXEL_SIZE);
         //Creates a new instance of the game.
         this.game = _game;
         //New world with no gravity and allows sleeping bodies.
-        world = new World(new Vector2(0, 0), true);
+        world = new World(Vector2.Zero, true);
         player = new Survivor(this);
         bullets = new ArrayList<Bullet>();
         fireWeapon = true;
 
         gameCam = new OrthographicCamera();
-        //Zoom level
-        gamePort = new ExtendViewport(1f, 1f, gameCam);
+        //Extends what the screen can see if being used on bigger devices without stretching or resizing.
+        gamePort = new ExtendViewport(zoom, zoom, gameCam);
         //Camera starting position.
         float initCameraX = gamePort.getWorldWidth() / 2;
         float initCameraY = gamePort.getWorldHeight() / 2;
@@ -104,7 +107,7 @@ public class PlayScreen implements Screen {
         //gameCam.setToOrtho(false, gamePort.getWorldWidth()/2, gamePort.getWorldHeight()/2);
 
         //gamePort.setScreenSize(GameConstants.V_WIDTH, GameConstants.V_HEIGHT);
-        hud = new HUD(game.batch, ctx);
+        hud = new HUD(game.batch, _ctx);
 
         //Loads in the map asset and renderer.
         mapLoader = new TmxMapLoader();
@@ -119,14 +122,12 @@ public class PlayScreen implements Screen {
         world.setContactListener(new WorldContactListener());
     }
 
-
     /**
      * This method is called to show this screen as the current screen.
      * To be implemented
      */
     @Override
     public void show() {
-
     }
 
     /**
@@ -135,7 +136,6 @@ public class PlayScreen implements Screen {
      * @param _dt is delta time.
      */
     public void update(float _dt) {
-
         //This sets the fps of the game. Iterations are just for precision for the physics.
         world.step(FPS, VEL_ITERATIONS, POS_ITERATIONS);
 
@@ -149,11 +149,11 @@ public class PlayScreen implements Screen {
             bullets.add(new Bullet(this, player.getPositionX(), player.getPositionY(), fireWeapon));
             fireWeapon = false;
         }
-
+        //Updates the bullets.
         for (Bullet bullet : bullets){
             bullet.update(_dt);
         }
-
+        //Updates the enemies.
         for (Enemy enemy : creator.getZombies()) {
             enemy.update(_dt);
         }
@@ -164,8 +164,6 @@ public class PlayScreen implements Screen {
         // This renders only what can be seen by the player -- the gameCam.
         renderer.setView(gameCam);
     }
-
-
 
     /**
      * Clears the map and re-renders each update.
@@ -192,19 +190,18 @@ public class PlayScreen implements Screen {
 
         //This draws the batch.
         player.draw(game.batch);
+        //Draws the projectiles.
         for (Bullet bullet : bullets){
             bullet.draw(game.batch);
         }
-
+        //Draws the enemies
         for (Enemy enemy : creator.getZombies())
             enemy.draw(game.batch);
         //This stops putting textures for the game camera.
         game.batch.end();
-
         //This draws the what is in the HUD camera.
-        game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-
-        hud.stage.draw();
+        game.batch.setProjectionMatrix(this.hud.getStage().getCamera().combined);
+        hud.getStage().draw();
     }
 
     /**
@@ -223,7 +220,6 @@ public class PlayScreen implements Screen {
      */
     @Override
     public void pause() {
-
     }
 
     /**
@@ -231,7 +227,6 @@ public class PlayScreen implements Screen {
      */
     @Override
     public void resume() {
-
     }
 
     /**
@@ -240,11 +235,10 @@ public class PlayScreen implements Screen {
      */
     @Override
     public void hide() {
-
     }
 
     /**
-     * To be implemented
+     * Removes all resources in the PlayScreen to prevent memory leaks.
      */
     @Override
     public void dispose() {
@@ -270,5 +264,6 @@ public class PlayScreen implements Screen {
     public TextureRegion[][] getTextures() {
         return tiles;
     }
+    public Survivor getSurvivor() { return this.player; }
 }
 
