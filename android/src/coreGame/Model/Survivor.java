@@ -1,10 +1,11 @@
 package coreGame.Model;
 /**
- * This class creates the Survivor object.
+ * This class creates the Survivor object which is directly controlled by the user.
+ *
  * @author Ezrie Brant
  * @author David Chan
  * @author Francis Ynoa
- * Last Updated: 11/14/2019
+ * Last Updated: 12/10/2019
  */
 import coreGame.Util.GameConstants;
 import coreGame.View.Scenes.HUD;
@@ -21,13 +22,14 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Survivor extends Sprite {
-    public World world;
-    public Body b2body;
-    public Vector2 startPos = new Vector2(800 / GameConstants.PPM, 700 / GameConstants.PPM);
+
+    private World world;
+    private Body b2body;
+    private Vector2 startPos = new Vector2(800 / GameConstants.PPM, 700 / GameConstants.PPM);
     private final float SPEED = 0.5f;
     private final float MAX_SPEED = 2f;
     float DAMPING = 10f;
-    public int healthPoints;
+    private int healthPoints;
     private TextureRegion sTexture;
     private Sprite sprite;
     private boolean spriteIsFlipped;
@@ -42,6 +44,7 @@ public class Survivor extends Sprite {
         setHealthPoints(100);
         direction = new Vector2(0, 0);
 
+        //The texture used for the survivor is at [4][5] from the sprite images (spritesheet.png)
         TextureRegion tex = _screen.getTextures()[4][5];
         sTexture = new TextureRegion(tex);
         //Sets textures to the coordinates defined by the sprite batch (from getTextures[coords]).
@@ -55,13 +58,12 @@ public class Survivor extends Sprite {
     /**
      * Defines Survivor with shape and starting position.
      */
-    public void defineSurvivor(){
+    protected void defineSurvivor(){
         BodyDef bdef = new BodyDef();
         bdef.position.set(startPos);
         //Makes the survivor body dynamic; the survivor is affected by the physics in the box 2d world.
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
-        //b2body.setBullet(true);
         //Linear damping slows down the player movement if no keys are being pressed.
         b2body.setLinearDamping(DAMPING);
 
@@ -121,7 +123,8 @@ public class Survivor extends Sprite {
         sprite.getTexture().dispose();
     }
 
-    //==================================== Getters ==================================
+    //==================================== Getters ==================================//
+
     public float getPositionX(){
         return b2body.getPosition().x - (sprite.getWidth() / 2f);
     }
@@ -152,7 +155,8 @@ public class Survivor extends Sprite {
         return new Vector2(dirX, dirY);
     }
 
-    //=================================== Setters =====================================
+    //=================================== Setters =====================================//
+
     public void setHealthPoints(int _healthPoints) {
         this.healthPoints = _healthPoints;
     }

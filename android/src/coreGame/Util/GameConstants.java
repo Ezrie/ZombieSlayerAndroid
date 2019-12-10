@@ -20,6 +20,12 @@ public class GameConstants {
     public static final float PPM = 100;
 
     /*
+    The sprite textures used all measure 16 x 16 pixels. Divide by the PPM to get the scaled
+    measurements for use in Box2D.
+    */
+    public static final float SPRITE_SIZE = 16 / PPM;
+
+    /*
     Each fixture has a filter. The two parts of a filter is category and mask.
     The "category" looks at what fixture is being used, and a "mask" looks at what the fixture
     can collide with.
