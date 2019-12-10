@@ -36,4 +36,6 @@ public abstract class Enemy extends Sprite{
 
     public abstract void dispose();
 
+    public abstract void minusHealth(int _value);
+
 }

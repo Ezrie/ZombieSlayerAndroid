@@ -20,6 +20,8 @@
     <string name="music">Music</string>
     <string name="sound_effects">Sound Effects</string>
     <string name="language">Language</string>
+    <string name="retry">Play Again</string>
+    <string name="home">Main Menu</string>
     <string name="back">Back</string>
     <string name="Load">Load</string>
     <string name="Save">Save</string>

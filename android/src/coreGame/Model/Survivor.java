@@ -80,19 +80,18 @@ public class Survivor extends Sprite {
                 GameConstants.ZOMBIE_BIT;
 
         fdef.shape = shape;
-        fdef.restitution = 1;
         //The sensor makes the fixture to longer collide with anything in the box 2d world if set to true.
         fdef.isSensor = false;
         b2body.createFixture(fdef).setUserData("survivor");
     }
 
     public void update(float _dt, HUD hud) {
-        if (hud.handleJoystickInput().equals(ZERO_VECTOR)) {
+        if (hud.joystick.handleJoystickInput(hud).isZero()) {
             setVelocity(ZERO_VECTOR);
         } else {
 
-            direction.x = hud.handleJoystickInput().x;
-            direction.y = hud.handleJoystickInput().y;
+            direction.x = hud.joystick.handleJoystickInput(hud).x;
+            direction.y = hud.joystick.handleJoystickInput(hud).y;
             hypotenuse = Math.sqrt((direction.x * direction.x) + (direction.y * direction.y));
             direction.x = (direction.x / (float) hypotenuse) * SPEED;
             direction.y = (direction.y / (float) hypotenuse) * SPEED;
@@ -141,6 +140,16 @@ public class Survivor extends Sprite {
 
     public float getVelocityY() {
         return b2body.getLinearVelocity().y;
+    }
+
+    public Vector2 getDirection(HUD hud) {
+        float dirX = hud.joystick.handleJoystickInput(hud).x;
+        float dirY = hud.joystick.handleJoystickInput(hud).y;
+        float hyp = (float) Math.sqrt((dirX * dirX) + (dirY * dirY));
+        dirX = (dirX / (float) hyp);
+        dirY = (dirY / (float) hyp);
+
+        return new Vector2(dirX, dirY);
     }
 
     //=================================== Setters =====================================

@@ -15,22 +15,22 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity android:name="com.zombie.menu.Controller.GameLauncher"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="sensorLandscape"/>
         <activity
             android:name="com.zombie.menu.Views.Load"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name="com.zombie.menu.Views.GameEnd"
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name="com.zombie.menu.Views.Settings"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name="com.zombie.menu.Views.SaveState"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name="com.zombie.menu.Views.Game"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name="com.zombie.menu.Views.MainMenu"
-            android:screenOrientation="landscape"
+            android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +40,7 @@
         </activity>
         <activity
             android:name="com.zombie.menu.Views.GoogleSignInApi"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="sensorLandscape"/>
     </application>
 
 </manifest>

@@ -120,7 +120,7 @@ public class Settings extends AppCompatActivity {
         switch (_view.getId()) {
             case R.id.toggleMusic:
 
-                //Button is ON
+                //ActionButton is ON
                 if(tggleMusic.isChecked()){
                     Music.player.pause();
                     musicChecked = true;

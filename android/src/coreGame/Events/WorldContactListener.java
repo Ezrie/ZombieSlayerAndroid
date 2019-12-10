@@ -19,6 +19,7 @@ import java.time.Instant;
 
 import coreGame.Model.Enemy;
 import coreGame.Model.InteractiveTileObject;
+import coreGame.Model.Projectile;
 import coreGame.Model.Survivor;
 import coreGame.Util.GameConstants;
 
@@ -96,6 +97,11 @@ public class WorldContactListener implements ContactListener {
         if (object.getUserData() != null && InteractiveTileObject.class.isAssignableFrom(object.getUserData().getClass())) {
             ((InteractiveTileObject) object.getUserData()).survivorCollision();
         }
+        //This fires the event between survivor and a projectile.
+        else if (object.getUserData() != null && Projectile.class.isAssignableFrom(object.getUserData().getClass())) {
+            //((InteractiveTileObject) object.getUserData()).survivorCollision();
+            ((Projectile) object.getUserData()).damageSurvivor();
+        }
         //This fires the event between survivor and an enemy.
         else if (object.getUserData() != null && Enemy.class.isAssignableFrom(object.getUserData().getClass())) {
             //if ((curTime.getTime() - startTime.getTime()) > Enemy.damageDeltaTime) {
@@ -114,6 +120,10 @@ public class WorldContactListener implements ContactListener {
         //This fires the event between a zombie and a survivor.
         else if (object.getUserData() != null && Survivor.class.isAssignableFrom(object.getUserData().getClass())) {
             ((Enemy) _Zombie.getUserData()).damageSurvivor();
+        }
+        //This fires the event between a zombie and a projectile.
+        else if (object.getUserData() != null && Projectile.class.isAssignableFrom(object.getUserData().getClass())) {
+            ((Projectile) object.getUserData()).damageEnemy((Enemy) _Zombie.getUserData());
         }
     }
 

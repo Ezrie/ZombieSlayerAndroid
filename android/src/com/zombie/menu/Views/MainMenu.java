@@ -26,6 +26,7 @@ public class MainMenu extends AppCompatActivity {
     private Button btnSettings;
     private FullScreen fullScreen = new FullScreen();
     private Button signIn;
+    private Music player;
 
 
     @Override
@@ -39,7 +40,7 @@ public class MainMenu extends AppCompatActivity {
         initialize();
 
         //Plays Music throughout the application.
-        Music.soundPlayer(this,R.raw.zombi);
+        player.soundPlayer(this,R.raw.zombi);
 
         this.fullScreen.hideSystem(this);
         this.fullScreen.checkSystem(this);

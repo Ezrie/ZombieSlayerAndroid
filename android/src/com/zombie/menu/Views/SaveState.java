@@ -155,7 +155,7 @@ public class SaveState extends AppCompatActivity {
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            System.out.println("Button does not correspond to a save file.");
+            System.out.println("ActionButton does not correspond to a save file.");
         }
         return null;
     }

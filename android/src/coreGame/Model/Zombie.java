@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -18,12 +17,11 @@ public class Zombie extends Enemy {
 
     private final float ZOMBIE_VELOCITY = 0.2f;
     private final float ZOMBIE_MAX_SPEED = 0.7f;
-    private float stateTime;
+    private final float MAX_HEALTH = 20f;
+    private float curHealth;
     private TextureRegion zTexture;
     private Sprite sprite;
     private boolean spriteIsFlipped;
-    private boolean setToDestroy;
-    private boolean isDestroyed;
     private Survivor target;
 
     private Vector2 direction;
@@ -43,8 +41,7 @@ public class Zombie extends Enemy {
         sprite.setBounds(sprite.getX(), sprite.getY(), 16 / GameConstants.PPM, 16 / GameConstants.PPM );
         spriteIsFlipped = false;
 
-        setToDestroy = false;
-        isDestroyed = false;
+        curHealth = MAX_HEALTH;
         direction = new Vector2(0, 0);
         directionForHyp = new Vector2(0, 0);
         target = _screen.player;
@@ -83,16 +80,11 @@ public class Zombie extends Enemy {
     }
 
     public void update(float _dt){
-        stateTime += _dt;
-        if (setToDestroy && !isDestroyed){
-            world.destroyBody(b2body);
-            isDestroyed = true;
-            stateTime = 0;
+        if (curHealth <= 0){
+            this.dispose();
         }
-        else if (!isDestroyed) {
-            if(isActive()) {
-                updateZombiePosition();
-            }
+        else if(isActive()) {
+            updateZombiePosition();
             sprite.setPosition(this.getPositionX(), this.getPositionY());
         }
     }
@@ -131,27 +123,27 @@ public class Zombie extends Enemy {
     }
 
     public void draw(Batch batch){
-        if (!isDestroyed || stateTime < 1) {
-            if (direction.x < 0) {
-                spriteIsFlipped = true;
-            } else {
-                spriteIsFlipped = false;
-            }
-            sprite.setFlip(spriteIsFlipped, false);
-            super.draw(batch);
-            sprite.draw(batch);
+        if (direction.x < 0) {
+            spriteIsFlipped = true;
+        } else {
+            spriteIsFlipped = false;
         }
+        sprite.setFlip(spriteIsFlipped, false);
+        super.draw(batch);
+        sprite.draw(batch);
+
     }
 
     public void dispose() {
+        this.b2body.destroyFixture(b2body.getFixtureList().first());
+        world.destroyBody(this.b2body);
         sprite.getTexture().dispose();
     }
 
     @Override
     public void damageSurvivor() {
         Gdx.app.log("Survivor-Zombie", "Collision");
-        HUD.changeHealth(5);
-        setToDestroy = false;
+        HUD.minusHealth(5);
     }
 
     public void setVelocityX(float _x) {
@@ -160,6 +152,10 @@ public class Zombie extends Enemy {
 
     public void setVelocityY(float _y) {
         this.b2body.setLinearVelocity(this.b2body.getLinearVelocity().x, _y);
+    }
+
+    public void minusHealth(int _value) {
+        this.curHealth -= _value;
     }
 
     //==================================== Getters ==================================

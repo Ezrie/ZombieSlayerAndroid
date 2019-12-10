@@ -11,6 +11,8 @@ package coreGame.View.Scenes;
 import android.content.Context;
 import android.view.SurfaceView;
 
+import coreGame.Model.ActionButton;
+import coreGame.Model.Joystick;
 import coreGame.Util.GameConstants;
 
 import com.badlogic.gdx.Gdx;
@@ -37,28 +39,23 @@ import java.util.Locale;
 
 Wireframe
 System Architecture
+projectiles
+test case
+comment code
+clean up code
+game over screen
 
 */
 
-public class HUD extends SurfaceView implements Disposable {
+public class HUD extends SurfaceView{
 
     //Creates a new stage and viewport where the HUD will be in.
     public Stage stage;
     private Viewport viewport;
+    public Joystick joystick;
 
-    //Joystick that will be used for movement.
-    private Touchpad joystick;
-    private Touchpad.TouchpadStyle joystickStyle;
-    private Skin joystickSkin;
-    private Drawable joystickBackground;
-    private Drawable joystickKnob;
-
-    //Button that will be used for firing projectiles.
-    private Button button;
-    private Button.ButtonStyle buttonStyle;
-    private Skin buttonSkin;
-    private Drawable buttonReleased;
-    private Drawable buttonPressed;
+    //ActionButton that will be used for firing projectiles.
+    public ActionButton button;
 
     //HUD literals.
     private Integer worldTimer = 300;
@@ -97,42 +94,16 @@ public class HUD extends SurfaceView implements Disposable {
 
         //Initialize labels.
         textFont = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
-        countdownHUD = new Label (String.format(Locale.getDefault(),"%03d", worldTimer),textFont);
-        scoreHUD = new Label(String.format(Locale.getDefault(),"%06d", scoreCount),textFont);
+        countdownHUD = new Label(String.format(Locale.getDefault(), "%03d", worldTimer), textFont);
+        scoreHUD = new Label(String.format(Locale.getDefault(), "%06d", scoreCount), textFont);
         timeHUD = new Label(timeLabel, textFont);
-        healthHUD = new Label(String.format(Locale.getDefault(),"%03d", healthLabel), textFont);
+        healthHUD = new Label(String.format(Locale.getDefault(), "%03d", healthLabel), textFont);
         worldHUD = new Label(scoreLabel, textFont);
         nameHUD = new Label(nameLabel, textFont);
 
-        //Joystick movement controls.
-        joystickSkin = new Skin();
-        joystickSkin.add("touchBackground", new Texture("touchpad.png"));
-        joystickSkin.add("touchKnob", new Texture("touchpad-knob.png"));
-        joystickSkin.getDrawable("touchKnob").setMinHeight(joystickSkin.getDrawable("touchKnob").getMinHeight() / 2);
-        joystickSkin.getDrawable("touchKnob").setMinWidth(joystickSkin.getDrawable("touchKnob").getMinWidth() / 2);
-        joystickStyle = new Touchpad.TouchpadStyle();
-        joystickBackground = joystickSkin.getDrawable("touchBackground");
-        joystickKnob = joystickSkin.getDrawable("touchKnob");
-        joystickStyle.background = joystickBackground;
-        joystickStyle.knob = joystickKnob;
+        joystick = new Joystick(10, 8, 8, 64, 64);
 
-        joystick = new Touchpad(10, joystickStyle);
-        joystick.setBounds(8, 8, 64, 64);
-
-        //Button for firing projectiles.
-        buttonSkin = new Skin();
-        buttonSkin.add("buttonReleased", new Texture("button-arcade.png"));
-        buttonSkin.add("buttonPressed", new Texture("button-arcade-pressed.png"));
-        buttonSkin.getDrawable("buttonReleased").setMinHeight(buttonSkin.getDrawable("buttonReleased").getMinHeight() / 2);
-        buttonSkin.getDrawable("buttonReleased").setMinWidth(buttonSkin.getDrawable("buttonReleased").getMinWidth() / 2);
-        buttonSkin.getDrawable("buttonPressed").setMinHeight(buttonSkin.getDrawable("buttonPressed").getMinHeight() / 2);
-        buttonSkin.getDrawable("buttonPressed").setMinWidth(buttonSkin.getDrawable("buttonPressed").getMinWidth() / 2);
-        buttonStyle = new Button.ButtonStyle();
-        buttonReleased = buttonSkin.getDrawable("buttonReleased");
-        buttonPressed = buttonSkin.getDrawable("buttonPressed");
-
-        button = new Button(buttonReleased, buttonPressed);
-        button.setBounds(350, 16, 40, 40);
+        button = new ActionButton(350, 16, 40, 40);
 
         //Creates a table at the top of the game's window.
         Table table = new Table();
@@ -151,42 +122,39 @@ public class HUD extends SurfaceView implements Disposable {
 
         //Add the created table to the stage.
         stage.addActor(table);
-        stage.addActor(joystick);
-        stage.addActor(button);
+        stage.addActor(joystick.getJoystick());
+        stage.addActor(button.getButton());
     }
-    public void update(float _dt){
+
+    public void update(float _dt) {
+        //Timer update.
         timeCount += _dt;
-        if (timeCount >= 1){
+        if (timeCount >= 1) {
             worldTimer--;
-            countdownHUD.setText(String.format(Locale.getDefault(),"%03d", worldTimer));
+            countdownHUD.setText(String.format(Locale.getDefault(), "%03d", worldTimer));
             timeCount = 0;
         }
     }
 
-    public boolean isButtonPressed() {
-        return button.isPressed();
-    }
-
-    public Vector2 handleJoystickInput() {
-        if(joystick.getKnobPercentX() == 0 && joystick.getKnobPercentY() == 0) {
-            return new Vector2(0, 0);
-        } else {
-            return new Vector2(joystick.getKnobPercentX(), joystick.getKnobPercentY());
-        }
-    }
-
-    public static void changeHealth(int _value){
+    public static void minusHealth(int _value) {
         healthLabel -= _value;
-        healthHUD.setText(String.format(Locale.getDefault(),"%03d", healthLabel));
+        healthHUD.setText(String.format(Locale.getDefault(), "%03d", healthLabel));
     }
 
-    public static void addScore(int _value){
+    public static void addToScore(int _value) {
         scoreCount += _value;
-        scoreHUD.setText(String.format(Locale.getDefault(),"%06d", scoreCount));
+        scoreHUD.setText(String.format(Locale.getDefault(), "%06d", scoreCount));
     }
 
-    @Override
     public void dispose() {
         stage.dispose();
+    }
+
+    public int getHealth() {
+        return this.healthLabel.intValue();
+    }
+
+    public int getTime(){
+        return this.worldTimer.intValue();
     }
 }

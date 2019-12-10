@@ -8,6 +8,7 @@ package com.zombie.menu.Controller;
  * Last Updated: 10/02/2019
  */
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -19,11 +20,15 @@ import coreGame.Game.ZombieGame;
 
 public class GameLauncher extends AndroidApplication {
 
+    ZombieGame game;
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 
         //Returns the app to immersion mode if the app looses and then regains focus
+        super.useImmersiveMode(false);
+        /**
         if (hasFocus) {
             View decorView = getWindow().getDecorView();
             decorView.setSystemUiVisibility(
@@ -34,16 +39,17 @@ public class GameLauncher extends AndroidApplication {
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
+         */
     }
-
     //Launcher for the app
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         config.useAccelerometer = false;
         config.useCompass = false;
-        ZombieGame game = new ZombieGame(getContext());
+        game = new ZombieGame(this.getContext());
         initialize(game, config);
 
         //Puts the device into immersion mode (hide the top navigation bars) if the device has that feature (KitKat and up)

@@ -9,8 +9,10 @@ package coreGame.View.Screens;
  */
 
 import android.content.Context;
+import android.content.Intent;
 
 import coreGame.Events.WorldContactListener;
+import coreGame.Model.Bullet;
 import coreGame.Model.Enemy;
 import coreGame.Model.Survivor;
 import coreGame.Util.GameConstants;
@@ -32,13 +34,16 @@ import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.zombie.menu.Views.GameEnd;
+
+import java.util.ArrayList;
 
 import coreGame.View.Scenes.HUD;
 
 public class PlayScreen implements Screen {
+
+    private Context ctx;
 
     private final int VEL_ITERATIONS = 6;
     private final int POS_ITERATIONS = 2;
@@ -46,6 +51,11 @@ public class PlayScreen implements Screen {
 
     //This creates Survivor.
     public Survivor player;
+    //Creates an arrayList for bullets.
+    ArrayList<Bullet> bullets;
+    private float curDelta;
+    private final float cooldown = 1f;
+
     //Declares a new game.
     private ZombieGame game;
     //Camera that follows the game.
@@ -53,7 +63,7 @@ public class PlayScreen implements Screen {
     //The viewport determines the aspect ratio for different devices.
     private Viewport gamePort;
     //HUD displays the informational text across the top of the screen.
-    private HUD hud;
+    public HUD hud;
 
     //Loads the map into the game.
     private TmxMapLoader mapLoader;
@@ -76,6 +86,7 @@ public class PlayScreen implements Screen {
      * @param _game
      */
     public PlayScreen(ZombieGame _game, Context ctx) {
+        this.ctx = ctx;
         //Loads sprite sheet image.
         spriteSheet = new Texture(Gdx.files.internal("spritesheet.png"));
         tiles = TextureRegion.split(spriteSheet,16,16);
@@ -84,6 +95,7 @@ public class PlayScreen implements Screen {
         //New world with no gravity and allows sleeping bodies.
         world = new World(new Vector2(0, 0), true);
         player = new Survivor(this);
+        bullets = new ArrayList<Bullet>();
 
         gameCam = new OrthographicCamera();
         //Zoom level
@@ -124,20 +136,44 @@ public class PlayScreen implements Screen {
     /**
      * This updates the camera position continuously. Called by render(float _dt).
      *
-     * @param _dt is delta time.
+     * @param _dt is the change in time since the last called update.
      */
     public void update(float _dt) {
+        curDelta += _dt;
 
         //This sets the fps of the game. Iterations are just for precision for the physics.
         world.step(FPS, VEL_ITERATIONS, POS_ITERATIONS);
 
         //This updates the HUD, specifically the timer countdown.
         hud.update(_dt);
+        if(hud.getHealth() == 0 || hud.getTime() == 0) {
+                Intent theEnd = new Intent(ctx, GameEnd.class);
+                theEnd.putExtra("isWin", false);
+                ctx.startActivity(theEnd);
+        }
         //Pass it hud for now. Will make controller later
         player.update(_dt, hud);
 
+
+        //Fires weapon if the cooldown isn't active.
+        if (this.hud.button.isButtonPressed() && curDelta >= cooldown){
+            bullets.add(new Bullet(this, player.getPositionX(), player.getPositionY(), player.getDirection(this.hud).x, player.getDirection(this.hud).y));
+            curDelta = 0;
+        }
+
         for (Enemy enemy : creator.getZombies()) {
             enemy.update(_dt);
+        }
+
+        for (Bullet bullet : bullets){
+            bullet.update(_dt);
+        }
+
+
+        if(creator.getZombies().isEmpty()){
+            Intent theEnd = new Intent(ctx, GameEnd.class);
+            theEnd.putExtra("isWin", true);
+            ctx.startActivity(theEnd);
         }
         //This makes the game camera follow the player.
         gameCam.position.x = player.getPositionX();
@@ -151,9 +187,8 @@ public class PlayScreen implements Screen {
 
     /**
      * Clears the map and re-renders each update.
-     * The _delta is the time in seconds since the last render.
      *
-     * @param _delta
+     * @param _delta is the time in seconds since the last render.
      */
     @Override
     public void render(float _delta) {
@@ -174,6 +209,10 @@ public class PlayScreen implements Screen {
 
         //This draws the batch.
         player.draw(game.batch);
+
+        for (Bullet bullet : bullets){
+            bullet.draw(game.batch);
+        }
 
         for (Enemy enemy : creator.getZombies())
             enemy.draw(game.batch);
@@ -230,6 +269,9 @@ public class PlayScreen implements Screen {
         player.dispose();
         for (Enemy enemy : creator.getZombies()) {
             enemy.dispose();
+        }
+        for (Bullet bullet : bullets){
+            bullet.dispose();
         }
         map.dispose();
         renderer.dispose();
