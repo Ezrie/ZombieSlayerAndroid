@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -36,7 +37,6 @@ import java.util.Locale;
 
 Wireframe
 System Architecture
-Joystick
 
 */
 
@@ -52,6 +52,13 @@ public class HUD extends SurfaceView implements Disposable {
     private Skin joystickSkin;
     private Drawable joystickBackground;
     private Drawable joystickKnob;
+
+    //Button that will be used for firing projectiles.
+    private Button button;
+    private Button.ButtonStyle buttonStyle;
+    private Skin buttonSkin;
+    private Drawable buttonReleased;
+    private Drawable buttonPressed;
 
     //HUD literals.
     private Integer worldTimer = 300;
@@ -112,6 +119,21 @@ public class HUD extends SurfaceView implements Disposable {
         joystick = new Touchpad(10, joystickStyle);
         joystick.setBounds(8, 8, 64, 64);
 
+        //Button for firing projectiles.
+        buttonSkin = new Skin();
+        buttonSkin.add("buttonReleased", new Texture("button-arcade.png"));
+        buttonSkin.add("buttonPressed", new Texture("button-arcade-pressed.png"));
+        buttonSkin.getDrawable("buttonReleased").setMinHeight(buttonSkin.getDrawable("buttonReleased").getMinHeight() / 2);
+        buttonSkin.getDrawable("buttonReleased").setMinWidth(buttonSkin.getDrawable("buttonReleased").getMinWidth() / 2);
+        buttonSkin.getDrawable("buttonPressed").setMinHeight(buttonSkin.getDrawable("buttonPressed").getMinHeight() / 2);
+        buttonSkin.getDrawable("buttonPressed").setMinWidth(buttonSkin.getDrawable("buttonPressed").getMinWidth() / 2);
+        buttonStyle = new Button.ButtonStyle();
+        buttonReleased = buttonSkin.getDrawable("buttonReleased");
+        buttonPressed = buttonSkin.getDrawable("buttonPressed");
+
+        button = new Button(buttonReleased, buttonPressed);
+        button.setBounds(350, 16, 40, 40);
+
         //Creates a table at the top of the game's window.
         Table table = new Table();
         table.top();
@@ -130,6 +152,7 @@ public class HUD extends SurfaceView implements Disposable {
         //Add the created table to the stage.
         stage.addActor(table);
         stage.addActor(joystick);
+        stage.addActor(button);
     }
     public void update(float _dt){
         timeCount += _dt;
@@ -138,6 +161,10 @@ public class HUD extends SurfaceView implements Disposable {
             countdownHUD.setText(String.format(Locale.getDefault(),"%03d", worldTimer));
             timeCount = 0;
         }
+    }
+
+    public boolean isButtonPressed() {
+        return button.isPressed();
     }
 
     public Vector2 handleJoystickInput() {

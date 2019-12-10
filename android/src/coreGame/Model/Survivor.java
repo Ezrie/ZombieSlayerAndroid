@@ -32,7 +32,7 @@ public class Survivor extends Sprite {
     private Sprite sprite;
     private boolean spriteIsFlipped;
     public final Vector2 ZERO_VECTOR = new Vector2(0, 0);
-    private Vector2 direction;
+    public Vector2 direction;
     private double hypotenuse;
 
     public Survivor(PlayScreen _screen){
@@ -80,6 +80,7 @@ public class Survivor extends Sprite {
                 GameConstants.ZOMBIE_BIT;
 
         fdef.shape = shape;
+        fdef.restitution = 1;
         //The sensor makes the fixture to longer collide with anything in the box 2d world if set to true.
         fdef.isSensor = false;
         b2body.createFixture(fdef).setUserData("survivor");

@@ -27,6 +27,7 @@ public class Zombie extends Enemy {
     private Survivor target;
 
     private Vector2 direction;
+    private Vector2 directionForHyp;
     private double hypotenuse;
     private final float ATTACK_DISTANCE = 1.5f;
 
@@ -45,6 +46,7 @@ public class Zombie extends Enemy {
         setToDestroy = false;
         isDestroyed = false;
         direction = new Vector2(0, 0);
+        directionForHyp = new Vector2(0, 0);
         target = _screen.player;
     }
 
@@ -96,8 +98,11 @@ public class Zombie extends Enemy {
     }
 
     private boolean isActive() {
+        directionForHyp.x = target.getPositionX() - this.getPositionX();
+        directionForHyp.y = target.getPositionY() - this.getPositionY();
+        hypotenuse = Math.sqrt((directionForHyp.x * directionForHyp.x) + (directionForHyp.y * directionForHyp.y));
         //Don't trigger enemies that are too far away.
-        if (getDirectionHypotenuse() > ATTACK_DISTANCE) {
+        if (hypotenuse > ATTACK_DISTANCE) {
             return false;
         }
         return true;
@@ -111,8 +116,11 @@ public class Zombie extends Enemy {
     }
 
     private void updateZombiePosition() {
-        direction.x = direction.x / getDirectionHypotenuse();
-        direction.y = direction.y / getDirectionHypotenuse();
+        direction.x = target.getPositionX() - this.getPositionX();
+        direction.y = target.getPositionY() - this.getPositionY();
+        hypotenuse = Math.sqrt((direction.x * direction.x) + (direction.y * direction.y));
+        direction.x = direction.x / (float)hypotenuse;
+        direction.y = direction.y / (float)hypotenuse;
 
         if (this.getVelocityX() <= ZOMBIE_MAX_SPEED) {
             this.setVelocityX(direction.x * ZOMBIE_VELOCITY);

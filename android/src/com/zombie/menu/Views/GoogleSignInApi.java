@@ -78,6 +78,13 @@ public class GoogleSignInApi extends AppCompatActivity {
 
         this.fullScreen.hideSystem(this);
         this.fullScreen.checkSystem(this);
+
+
+
+
+
+
+
     }
 
     private void signOut() {
@@ -129,6 +136,10 @@ public class GoogleSignInApi extends AppCompatActivity {
                 photo = acct.getPhotoUrl();
 
                 updateUI(true);
+
+                /*Intent toSaveState = new Intent(getApplicationContext(), SaveState.class);
+                toSaveState.putExtra("brooooo","testing google api");
+                startActivity(toSaveState);*/
             }else{
                 updateUI(false);
             }

@@ -7,7 +7,6 @@ package com.zombie.menu.Views;
  * Last Updated: 11/24/2019
  */
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -58,6 +57,10 @@ public class SaveState extends AppCompatActivity {
 
         this.fullScreen.hideSystem(this);
         this.fullScreen.checkSystem(this);
+
+        if(getIntent().hasExtra("brooooo")){
+            saveObjects.add(getIntent().getStringExtra("brooooo"));
+        }
 
         Button backBtn = findViewById(R.id.btnBack);
         backBtn.setOnClickListener(new View.OnClickListener() {

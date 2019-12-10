@@ -98,10 +98,10 @@ public class WorldContactListener implements ContactListener {
         }
         //This fires the event between survivor and an enemy.
         else if (object.getUserData() != null && Enemy.class.isAssignableFrom(object.getUserData().getClass())) {
-            if ((curTime.getTime() - startTime.getTime()) > Enemy.damageDeltaTime) {
+            //if ((curTime.getTime() - startTime.getTime()) > Enemy.damageDeltaTime) {
                 ((Enemy) object.getUserData()).damageSurvivor();
-                curTime = new Timestamp(curDate.getTime());
-            }
+                //curTime = new Timestamp(curDate.getTime());
+            //}
         }
     }
 
