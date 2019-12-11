@@ -12,6 +12,8 @@
     <string name="sign_in">Sign In</string>
     <string name="money">$</string>
     <string name="weapons">Weapons</string>
+    <string name="on">ON</string>
+    <string name="off">OFF</string>
     <string name="skins">Skins</string>
     <string name="misc">misc</string>
     <string name="points">Points</string>

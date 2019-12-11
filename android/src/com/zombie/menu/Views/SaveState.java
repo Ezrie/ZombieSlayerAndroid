@@ -1,10 +1,11 @@
 package com.zombie.menu.Views;
 /**
- * This class will hold the state of a player's progress in the game by saving to and from the database.
+ * Saves the game various variables.
  *
  * @author Ezrie Brant
+ * @author David Chan
  * @author Francis Ynoa
- * Last Updated: 11/24/2019
+ * Last Updated: 11/19/2019
  */
 
 import android.content.Context;
@@ -23,25 +24,20 @@ import Database.DBTranslator;
 
 public class SaveState extends AppCompatActivity {
 
-    //Linked list that will hold current game's data to save or load a game state given this list.
-    //Used by save and load methods.
-    public LinkedList<String> saveObjects = new LinkedList<>();
-    public final static String defaultFile = "1";
-
-    private FullScreen fullScreen = new FullScreen();
-
-    //Create the context needed for opening/editing files.
-    Context ctx = this;
-
+    public final static String googleFile = "googleSignIn";
+    public final static String languageFile = "language";
     //Names of the save files.
     final String FILE_NAME_1 = "save1";
     final String FILE_NAME_2 = "save2";
     final String FILE_NAME_3 = "save3";
-
-    //Enumeration of button types for QOL.
-    enum buttonType {
-        LOAD, SAVE, DELETE
-    }
+    //Linked list that will hold current game's data to save or load a game state given this list.
+    //Used by save and load methods.
+    public LinkedList<String> saveObjects = new LinkedList<>();
+    //Create the context needed for opening/editing files.
+    Context ctx = this;
+    private String english = "en";
+    private String spanish = "sp";
+    private FullScreen fullScreen = new FullScreen();
 
     /**
      * Sets the screen to the related XML, creates the save files, and initializes the button functions.
@@ -58,15 +54,51 @@ public class SaveState extends AppCompatActivity {
         this.fullScreen.hideSystem(this);
         this.fullScreen.checkSystem(this);
 
-        if(getIntent().hasExtra("brooooo")){
-            saveObjects.add(getIntent().getStringExtra("brooooo"));
+        //This if else block only executes if Settings.class was to transition into this class.
+        //If that were to happen, the language they chose will be saved in the database.
+        if (getIntent().hasExtra("en")) {
+            load(languageFile);
+            if (saveObjects.contains("sp")) {
+                saveObjects.remove("sp");
+                save(saveObjects, languageFile);
+            }
+            if (!saveObjects.contains("en")) {
+                saveObjects.add("en");
+                save(saveObjects, languageFile);
+            }
+            finish();
+        } else if (getIntent().hasExtra("sp")) {
+            load(languageFile);
+            if (saveObjects.contains("en")) {
+                saveObjects.remove("en");
+                save(saveObjects, languageFile);
+            }
+            if (!saveObjects.contains("sp")) {
+                saveObjects.add("sp");
+                save(saveObjects, languageFile);
+            }
+            finish();
         }
+
+        //This if block only executes if GoogelSignInApi.class was to transition into this class.
+        //If that were to happen, the User's Google account information would be saved to the database.
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            if (extras.containsKey("email")) {
+                saveObjects.add(extras.getString("email"));
+                saveObjects.add(extras.getString("name"));
+                saveObjects.add(extras.getString("id"));
+                save(saveObjects, googleFile);
+                finish();
+            }
+        }
+
 
         Button backBtn = findViewById(R.id.btnBack);
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //From Activity class (Android Studio)
+                //Goes back to the class that transitioned to it.
                 finish();
             }
         });
@@ -144,18 +176,16 @@ public class SaveState extends AppCompatActivity {
         try {
             if (_button.getTag().toString().contains("3")) {
                 return FILE_NAME_3;
-            } else
-            if (_button.getTag().toString().contains("2")) {
+            } else if (_button.getTag().toString().contains("2")) {
                 return FILE_NAME_2;
-            } else
-            if (_button.getTag().toString().contains("1")) {
+            } else if (_button.getTag().toString().contains("1")) {
                 return FILE_NAME_1;
             } else {
                 throw new FileNotFoundException();
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            System.out.println("Button does not correspond to a save file.");
+            System.out.println("ActionButton does not correspond to a save file.");
         }
         return null;
     }
@@ -170,8 +200,6 @@ public class SaveState extends AppCompatActivity {
     public void save(LinkedList<String> _savedObjects, String _file) {
         //Put objects gotten from current game state in a linked list.
 
-        _savedObjects.add("test");
-        _savedObjects.add("");
 
         //Pass all to translator.
         DBTranslator.updateObject(ctx, _file, _savedObjects);
@@ -197,5 +225,10 @@ public class SaveState extends AppCompatActivity {
      */
     public void delete(String _file) {
         DBTranslator.deleteObject(ctx, _file);
+    }
+
+    //Enumeration of button types for QOL.
+    enum buttonType {
+        LOAD, SAVE, DELETE
     }
 }

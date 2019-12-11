@@ -7,7 +7,7 @@ package com.zombie.menu.Views;
  * @author Ezrie Brant
  * @author David Chan
  * @author Francis Ynoa
- * Last Updated: 11/19/2019
+ * Last Updated: 12/10/2019
  */
 
 import android.view.View;
@@ -15,8 +15,17 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class FullScreen {
-    public void hideSystem(AppCompatActivity _window) {
-        View decorView = _window.getWindow().getDecorView();
+
+    private final int VISIBLE = 0;
+
+    /**
+     * This method is used to make android studio run a class, that is used to
+     * display to the screen, to fit the entire user's phone screen.
+     *
+     * @param _Screen Object that contains everything that the user sees on the screen.
+     */
+    public void hideSystem(AppCompatActivity _Screen) {
+        View decorView = _Screen.getWindow().getDecorView();
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         // Set the content to appear under the system bars so that the
@@ -29,19 +38,23 @@ public class FullScreen {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
-    public void checkSystem(final AppCompatActivity _window){
-        View decorView = _window.getWindow().getDecorView();
+    /**
+     * If the screen is ever reseted back to the default view, this method
+     * will set it back to fullscreen.
+     *
+     * @param _Screen Object that contains everything that the user sees on the screen.
+     */
+    public void checkSystem(final AppCompatActivity _Screen) {
+        View decorView = _Screen.getWindow().getDecorView();
         decorView.setOnSystemUiVisibilityChangeListener
                 (new View.OnSystemUiVisibilityChangeListener() {
                     @Override
                     public void onSystemUiVisibilityChange(int visibility) {
                         // Note that system bars will only be "visible" if none of the
                         // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
-                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                            // TODO: The system bars are visible. Make any desired
-                            // adjustments to your UI, such as showing the action bar or
-                            // other navigational controls.
-                            hideSystem(_window);
+                        // The sytem bars are visible, we will change it back to fullscreen mode.
+                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == VISIBLE) {
+                            hideSystem(_Screen);
                         }
                     }
                 });

@@ -1,33 +1,40 @@
 package com.zombie.menu.Views;
 /**
  * This class is the main menu of the game. There exists various buttons on it and
- * when one of the buttons is clicked, it will clicked what the user sees on
- * the screen.
+ * when one of the buttons is clicked, it will transition to another activity.
  *
  * @author Ezrie Brant
  * @author David Chan
  * @author Francis Ynoa
- * Last Updated: 11/19/2019
+ * Last Updated: 12/10/2019
  */
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.zombie.menu.R;
 
 public class MainMenu extends AppCompatActivity {
+
 
     private Button btnStartGame;
     private Button btnLoad;
     private Button btnSettings;
     private FullScreen fullScreen = new FullScreen();
-    private Button signIn;
+    private Button btnsignIn;
 
-
+    /**
+     * Initializes objects that are viewed on the user screen. Also starts music to be
+     * played throughout the game.
+     *
+     * @param _savedInstanceState Object that android studio uses to save memory of this class when
+     *                            the user leaves the app(not quit/force quit) and returns.
+     */
     @Override
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
@@ -39,18 +46,12 @@ public class MainMenu extends AppCompatActivity {
         initialize();
 
         //Plays Music throughout the application.
-        Music.soundPlayer(this,R.raw.zombi);
+        Music.soundPlayer(this, R.raw.zombi);
 
         this.fullScreen.hideSystem(this);
         this.fullScreen.checkSystem(this);
     }
 
-    /*
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mediaPlayer.start();
-    }*/
 
     /**
      * Initialize the class fields.
@@ -59,8 +60,9 @@ public class MainMenu extends AppCompatActivity {
         this.btnStartGame = findViewById(R.id.btnStartGame);
         this.btnLoad = findViewById(R.id.btnLoad);
         this.btnSettings = findViewById(R.id.btnSettings);
-        this.signIn = findViewById(R.id.btnAccount);
+        this.btnsignIn = findViewById(R.id.btnAccount);
     }
+
 
     /**
      * When one of the button is clicked, a switch statement then decides what button

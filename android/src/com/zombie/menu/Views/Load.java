@@ -1,12 +1,19 @@
 package com.zombie.menu.Views;
-
-import androidx.appcompat.app.AppCompatActivity;
+/**
+ * A loading screen with a progess-bar are used before transitioning to the game.
+ *
+ * @author Ezrie Brant
+ * @author David Chan
+ * @author Francis Ynoa
+ * Last Updated: 12/10/2019
+ */
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.zombie.menu.Controller.GameLauncher;
 import com.zombie.menu.R;
@@ -19,6 +26,8 @@ public class Load extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView textView;
     private int counter = 0;
+    private int startTime = 0;
+    private int endTime = 100;
 
     @Override
     protected void onCreate(Bundle _savedInstanceState) {
@@ -36,26 +45,26 @@ public class Load extends AppCompatActivity {
      * updated to reflect that.
      */
     private void progress() {
-        progressBar = findViewById(R.id.progressbar);
-        textView = findViewById(R.id.progressText);
-        final Timer t = new Timer();
+        this.progressBar = findViewById(R.id.progressbar);
+        this.textView = findViewById(R.id.progressText);
+        final Timer timer = new Timer();
 
-        TimerTask tt = new TimerTask() {
+        TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                if (counter < 100) {
-                    counter++;
-                    textView.setText("" + counter + "%");
-                    progressBar.setProgress(counter);
-                }
-                if (counter == 100) {
-                    t.cancel();
-                    Intent launch = new Intent(getApplicationContext(), GameLauncher.class);
-                    startActivity(launch);
+                counter++;
+                textView.setText("%" + counter);
+                progressBar.setProgress(counter);
+                if (counter == endTime) {
+                    timer.cancel();
+                    Intent load = new Intent(getApplicationContext(), GameLauncher.class);
+                    startActivity(load);
                 }
             }
         };
-        t.schedule(tt, 0, 50);
+        //How long the loop should run for.
+        timer.schedule(timerTask, startTime, endTime);
+
+
     }
 }
-

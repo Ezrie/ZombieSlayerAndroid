@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name_sp">Zombie Slayer</string>
+    <string name="start_game_sp">Comienzo</string>
+    <string name="load_game_sp">Carga</string>
+    <string name="language_sp">Idioma</string>
+    <string name="back_sp">Atrás</string>
+    <string name="Load_sp">Carga</string>
+    <string name="Save_sp">Salvar</string>
+    <string name="SignOut_sp">Desconectar</string>
+    <string name="delete_sp">Borrar</string>
+    <string name="on_sp">EN</string>
+    <string name="off_sp">APAGADO</string>
+    <string name="save_sp">Salvar</string>
+    <string name="music_sp">Música</string>
+    <string name="save_slot_1_sp">Guardar ranura 1</string>
+    <string name="save_slot_2_sp">Guardar ranura 2</string>
+    <string name="save_slot_3_sp">Guardar ranurat 3</string>
+    <string name="Account_sp">Cuenta</string>
+    <string-array name="Languages_sp">
+        <item>Elige lengua</item>
+        <item>English</item>
+        <item>Español</item>
+    </string-array>
+
+</resources>
